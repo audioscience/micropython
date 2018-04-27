@@ -30,7 +30,7 @@ ifdef DEBUG
 CFLAGS += -g
 COPT = -O0
 else
-COPT = -Os -fdata-sections -ffunction-sections -DNDEBUG
+COPT = -Os -DNDEBUG
 # _FORTIFY_SOURCE is a feature in gcc/glibc which is intended to provide extra
 # security for detecting buffer overflows. Some distros (Ubuntu at the very least)
 # have it enabled by default.
@@ -72,7 +72,7 @@ endif
 LDFLAGS_ARCH = -Wl,-map,$@.map -Wl,-dead_strip
 else
 # Use gcc syntax for map file
-LDFLAGS_ARCH = -Wl,-Map=$@.map,--cref -Wl,--gc-sections
+LDFLAGS_ARCH = -Wl,-Map=$@.map,--cref
 endif
 LDFLAGS = $(LDFLAGS_MOD) $(LDFLAGS_ARCH) -lm $(LDFLAGS_EXTRA)
 
@@ -141,14 +141,12 @@ SRC_C = \
 	mpthreadport.c \
 	input.c \
 	file.c \
-	modmachine.c \
 	modos.c \
-	moduos_vfs.c \
 	modtime.c \
 	moduselect.c \
 	alloc.c \
 	coverage.c \
-	fatfs_port.c \
+	uclinux_math.c \
 	$(SRC_MOD)
 
 LIB_SRC_C = $(addprefix lib/,\
@@ -157,10 +155,10 @@ LIB_SRC_C = $(addprefix lib/,\
 	)
 
 # FatFS VFS support
-LIB_SRC_C += $(addprefix lib/,\
-	oofatfs/ff.c \
-	oofatfs/option/unicode.c \
-	)
+#LIB_SRC_C += $(addprefix lib/,\
+#	oofatfs/ff.c \
+#	oofatfs/option/unicode.c \
+#	)
 
 OBJ = $(PY_O)
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
