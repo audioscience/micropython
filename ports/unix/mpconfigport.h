@@ -26,6 +26,12 @@
 
 // options to control how MicroPython is built
 
+#include <sys/types.h>
+#include <limits.h>
+#include <linux/limits.h>
+
+#define MP_SSIZE_MAX LONG_MAX
+
 #define MICROPY_ALLOC_PATH_MAX      (PATH_MAX)
 #define MICROPY_PERSISTENT_CODE_LOAD (1)
 #if !defined(MICROPY_EMIT_X64) && defined(__x86_64__)
@@ -112,7 +118,8 @@
 #define MICROPY_STACKLESS_STRICT    (0)
 #endif
 
-#define MICROPY_PY_OS_STATVFS       (1)
+#define MICROPY_PY_UOS_VFS          (0)
+#define MICROPY_PY_OS_STATVFS       (0)
 #define MICROPY_PY_UTIME            (1)
 #define MICROPY_PY_UTIME_MP_HAL     (1)
 #define MICROPY_PY_UERRNO           (1)
@@ -219,7 +226,6 @@ extern const struct _mp_obj_module_t mp_module_jni;
     MICROPY_PY_JNI_DEF \
     MICROPY_PY_UTIME_DEF \
     MICROPY_PY_SOCKET_DEF \
-    { MP_ROM_QSTR(MP_QSTR_umachine), MP_ROM_PTR(&mp_module_machine) }, \
     { MP_ROM_QSTR(MP_QSTR_uos), MP_ROM_PTR(&mp_module_os) }, \
     MICROPY_PY_UOS_VFS_DEF \
     MICROPY_PY_USELECT_DEF \
@@ -322,3 +328,5 @@ void mp_unix_mark_exec(void);
 // For debugging purposes, make printf() available to any source file.
 #include <stdio.h>
 #endif
+
+//typedef mp_off_t                    off_t;

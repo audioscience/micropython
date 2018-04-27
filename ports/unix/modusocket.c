@@ -45,6 +45,10 @@
 #include "py/builtin.h"
 #include "py/mphal.h"
 
+#ifndef AI_NUMERICSERV
+#define AI_NUMERICSERV 0
+#endif
+
 /*
   The idea of this module is to implement reasonable minimum of
   socket-related functions to write typical clients and servers.

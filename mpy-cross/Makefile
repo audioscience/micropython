@@ -9,6 +9,7 @@ override undefine FROZEN_DIR
 override undefine FROZEN_MPY_DIR
 override undefine BUILD
 override undefine PROG
+override undefine CROSS_COMPILE
 endif
 
 include ../py/mkenv.mk

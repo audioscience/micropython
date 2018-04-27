@@ -14,7 +14,7 @@ QSTR_DEFS_COLLECTED = $(HEADER_BUILD)/qstrdefs.collected.h
 endif
 
 # some code is performance bottleneck and compiled with other optimization options
-CSUPEROPT = -O3
+CSUPEROPT = -Os
 
 # this sets the config file for FatFs
 CFLAGS_MOD += -DFFCONF_H=\"lib/oofatfs/ffconf.h\"
@@ -225,25 +225,9 @@ PY_EXTMOD_O_BASENAME = \
 	extmod/modutimeq.o \
 	extmod/moduhashlib.o \
 	extmod/modubinascii.o \
-	extmod/virtpin.o \
-	extmod/machine_mem.o \
-	extmod/machine_pinbase.o \
-	extmod/machine_signal.o \
-	extmod/machine_pulse.o \
-	extmod/machine_i2c.o \
-	extmod/machine_spi.o \
-	extmod/modussl_axtls.o \
-	extmod/modussl_mbedtls.o \
 	extmod/modurandom.o \
 	extmod/moduselect.o \
 	extmod/modwebsocket.o \
-	extmod/modwebrepl.o \
-	extmod/modframebuf.o \
-	extmod/vfs.o \
-	extmod/vfs_reader.o \
-	extmod/vfs_fat.o \
-	extmod/vfs_fat_diskio.o \
-	extmod/vfs_fat_file.o \
 	extmod/utime_mphal.o \
 	extmod/uos_dupterm.o \
 	lib/embed/abort_.o \
