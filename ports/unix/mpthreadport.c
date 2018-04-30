@@ -34,6 +34,7 @@
 
 #if MICROPY_PY_THREAD
 
+#include <bits/posix1_lim.h>
 #include <signal.h>
 #include <sched.h>
 
