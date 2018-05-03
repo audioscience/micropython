@@ -133,6 +133,8 @@ CFLAGS_MOD += -I/usr/lib/jvm/java-7-openjdk-amd64/include -DMICROPY_PY_JNI=1
 SRC_MOD += modjni.c
 endif
 
+CFLAGS_MOD += -I../../../../Dante
+
 # source files
 SRC_C = \
 	main.c \
@@ -147,6 +149,8 @@ SRC_C = \
 	alloc.c \
 	coverage.c \
 	uclinux_math.c \
+	iyo_hwio_mod.c \
+	../../../../Dante/hwio/dummy_hwioc.c \
 	$(SRC_MOD)
 
 LIB_SRC_C = $(addprefix lib/,\
