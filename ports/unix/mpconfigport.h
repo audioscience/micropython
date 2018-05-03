@@ -184,6 +184,7 @@ extern const struct _mp_obj_module_t mp_module_termios;
 extern const struct _mp_obj_module_t mp_module_socket;
 extern const struct _mp_obj_module_t mp_module_ffi;
 extern const struct _mp_obj_module_t mp_module_jni;
+extern const struct _mp_obj_module_t mp_module_iyo_hwio;
 
 #if MICROPY_PY_UOS_VFS
 #define MICROPY_PY_UOS_VFS_DEF { MP_ROM_QSTR(MP_QSTR_uos_vfs), MP_ROM_PTR(&mp_module_uos_vfs) },
@@ -227,6 +228,7 @@ extern const struct _mp_obj_module_t mp_module_jni;
     MICROPY_PY_UTIME_DEF \
     MICROPY_PY_SOCKET_DEF \
     { MP_ROM_QSTR(MP_QSTR_uos), MP_ROM_PTR(&mp_module_os) }, \
+    { MP_ROM_QSTR(MP_QSTR_iyo_hwio), MP_ROM_PTR(&mp_module_iyo_hwio) }, \
     MICROPY_PY_UOS_VFS_DEF \
     MICROPY_PY_USELECT_DEF \
     MICROPY_PY_TERMIOS_DEF \
