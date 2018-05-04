@@ -133,7 +133,32 @@ CFLAGS_MOD += -I/usr/lib/jvm/java-7-openjdk-amd64/include -DMICROPY_PY_JNI=1
 SRC_MOD += modjni.c
 endif
 
-CFLAGS_MOD += -I../../../../Dante
+ASI2700_ROOT = ../../../..
+#HWIO = $(ASI2700_ROOT)/Dante/hwio
+HWIO = $(realpath ../../../../Dante/hwio)
+XMOS = $(ASI2700_ROOT)/Dante/xmos/lib_asi/api
+CFLAGS_MOD += -I$(ASI2700_ROOT)/Dante -I$(HWIO) -I$(XMOS) \
+	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include/audinate \
+	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include/linux-2.4.x
+
+#CFLAGS += -fno-strict-aliasing
+
+
+LDFLAGS_MOD += -L$(ASI2700_ROOT)/Dante/dante-bbe/dev/lib -ldapi -ldns_sd
+SRC_MOD += \
+	iyo_hwio_mod.c \
+	$(HWIO)/hwioc.c \
+	$(HWIO)/queue_spi.c \
+	$(HWIO)/xmos_firmware.c \
+	$(HWIO)/adapter_info.c \
+	$(HWIO)/is31fl3733.c \
+	$(HWIO)/led_map.c \
+	$(HWIO)/hwio_conmon.c \
+	$(HWIO)/xmos_firmware.c \
+	$(HWIO)/hwio_err.c \
+	$(HWIO)/spi_transaction.c \
+	$(XMOS)/../src/lib_asi_spi.c \
+	$(XMOS)/../src/lib_asi_spi_i2c.c
 
 # source files
 SRC_C = \
@@ -149,8 +174,6 @@ SRC_C = \
 	alloc.c \
 	coverage.c \
 	uclinux_math.c \
-	iyo_hwio_mod.c \
-	../../../../Dante/hwio/dummy_hwioc.c \
 	$(SRC_MOD)
 
 LIB_SRC_C = $(addprefix lib/,\
