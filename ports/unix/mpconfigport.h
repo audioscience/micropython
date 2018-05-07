@@ -29,6 +29,7 @@
 #include <sys/types.h>
 #include <limits.h>
 #include <linux/limits.h>
+#include <endian.h>
 
 #define MP_SSIZE_MAX LONG_MAX
 #define MICROPY_ALLOC_PATH_MAX      (PATH_MAX)
