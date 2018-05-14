@@ -137,8 +137,8 @@ ASI2700_ROOT = ../../../..
 #HWIO = $(ASI2700_ROOT)/Dante/hwio
 HWIO = $(realpath ../../../../Dante/hwio)
 XMOS = $(ASI2700_ROOT)/Dante/xmos/lib_asi/api
-CFLAGS_MOD += -I$(ASI2700_ROOT)/Dante -I$(HWIO) -I$(XMOS) \
-	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include/audinate \
+CFLAGS_MOD += -I$(ASI2700_ROOT)/Dante \
+	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include \
 	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include/linux-2.4.x
 
 #CFLAGS += -fno-strict-aliasing
