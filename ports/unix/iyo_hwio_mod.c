@@ -3,8 +3,8 @@
 #include "extmod/misc.h"
 
 
-STATIC mp_obj_t mod_os_hwio_init(void) {
-    int r = hwioc_init();
+STATIC mp_obj_t mod_os_hwio_init(mp_obj_t loglevel) {
+    int r = hwioc_init(mp_obj_get_int(loglevel));
 
     if (r < 0) {
         mp_raise_OSError(-r);
@@ -12,7 +12,7 @@ STATIC mp_obj_t mod_os_hwio_init(void) {
 
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_init_obj, mod_os_hwio_init);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_init_obj, mod_os_hwio_init);
 
 
 STATIC mp_obj_t mod_os_hwio_shutdown(void) {
