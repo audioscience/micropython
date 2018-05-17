@@ -155,7 +155,6 @@ SRC_MOD += \
 	$(HWIO)/led_map.c \
 	$(HWIO)/hwio_conmon.c \
 	$(HWIO)/xmos_firmware.c \
-	$(HWIO)/hwio_err.c \
 	$(HWIO)/spi_transaction.c \
 	$(HWIO)/input_level_map.c \
 	$(HWIO)/dapi_simple_timer.c \
