@@ -135,7 +135,7 @@ endif
 
 ASI2700_ROOT = ../../../..
 #HWIO = $(ASI2700_ROOT)/Dante/hwio
-HWIO = $(realpath ../../../../Dante/hwio)
+HWIO = $(realpath ${ASI2700_ROOT}/Dante/hwio)
 XMOS = $(ASI2700_ROOT)/Dante/xmos/lib_asi/api
 CFLAGS_MOD += -I$(ASI2700_ROOT)/Dante \
 	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include \
@@ -157,6 +157,8 @@ SRC_MOD += \
 	$(HWIO)/xmos_firmware.c \
 	$(HWIO)/hwio_err.c \
 	$(HWIO)/spi_transaction.c \
+	$(HWIO)/input_level_map.c \
+	$(HWIO)/dapi_simple_timer.c \
 	$(XMOS)/../src/lib_asi_spi.c \
 	$(XMOS)/../src/lib_asi_spi_i2c.c
 
