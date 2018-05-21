@@ -150,6 +150,16 @@ STATIC mp_obj_t mod_os_mkdir(mp_obj_t path_in) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_os_mkdir_obj, mod_os_mkdir);
 
+STATIC mp_obj_t mod_os_rename(mp_obj_t path_src, mp_obj_t path_dst) {
+    // TODO: Accept mode param
+    const char *src = mp_obj_str_get_str(path_src);
+    const char *dst = mp_obj_str_get_str(path_dst);
+    int r = rename(src, dst);
+    RAISE_ERRNO(r, errno);
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_os_rename_obj, mod_os_rename);
+
 typedef struct _mp_obj_listdir_t {
     mp_obj_base_t base;
     mp_fun_1_t iternext;
@@ -221,6 +231,9 @@ STATIC const mp_rom_map_elem_t mp_module_os_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_getenv), MP_ROM_PTR(&mod_os_getenv_obj) },
     { MP_ROM_QSTR(MP_QSTR_mkdir), MP_ROM_PTR(&mod_os_mkdir_obj) },
     { MP_ROM_QSTR(MP_QSTR_ilistdir), MP_ROM_PTR(&mod_os_ilistdir_obj) },
+    #if MICROPY_PY_OS_RENAME
+    { MP_ROM_QSTR(MP_QSTR_rename), MP_ROM_PTR(&mod_os_rename_obj) },
+    #endif
     #if MICROPY_PY_OS_DUPTERM
     { MP_ROM_QSTR(MP_QSTR_dupterm), MP_ROM_PTR(&mp_uos_dupterm_obj) },
     #endif
