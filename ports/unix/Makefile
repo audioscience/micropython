@@ -137,9 +137,11 @@ ASI2700_ROOT = ../../../..
 #HWIO = $(ASI2700_ROOT)/Dante/hwio
 HWIO = $(realpath ${ASI2700_ROOT}/Dante/hwio)
 XMOS = $(ASI2700_ROOT)/Dante/xmos/lib_asi/api
+ASI2700_LIBS = $(ASI2700_ROOT)/libs
 CFLAGS_MOD += -I$(ASI2700_ROOT)/Dante \
 	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include \
-	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include/linux-2.4.x
+	-I$(ASI2700_ROOT)/Dante/dante-bbe/dev/include/linux-2.4.x \
+	-I$(ASI2700_LIBS)
 
 #CFLAGS += -fno-strict-aliasing
 
@@ -158,6 +160,8 @@ SRC_MOD += \
 	$(HWIO)/spi_transaction.c \
 	$(HWIO)/input_level_map.c \
 	$(HWIO)/dapi_simple_timer.c \
+	$(HWIO)/ax_lite.c \
+	$(ASI2700_LIBS)/dsp/chip/ak4458.c \
 	$(XMOS)/../src/lib_asi_spi.c \
 	$(XMOS)/../src/lib_asi_spi_i2c.c
 
