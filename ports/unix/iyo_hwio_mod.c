@@ -46,8 +46,8 @@ STATIC mp_obj_t mod_iyo_hwio_set_input_phantom_power(mp_obj_t index, mp_obj_t en
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_set_input_phantom_power_obj, mod_iyo_hwio_set_input_phantom_power);
 
-STATIC mp_obj_t mod_iyo_hwioc_set_diagnostic_rgb(mp_obj_t rgb) {
-    int r = hwioc_set_diagnostic_rgb(mp_obj_get_int(rgb));
+STATIC mp_obj_t mod_iyo_hwio_set_led_diagnostic(mp_obj_t enable, mp_obj_t rgb_pwm) {
+    int r = hwioc_set_led_diagnostic(!!mp_obj_get_int(enable), mp_obj_get_int(rgb_pwm));
 
     if (r < 0) {
         mp_raise_OSError(-r);
@@ -55,18 +55,7 @@ STATIC mp_obj_t mod_iyo_hwioc_set_diagnostic_rgb(mp_obj_t rgb) {
 
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwioc_set_diagnostic_rgb_obj, mod_iyo_hwioc_set_diagnostic_rgb);
-
-STATIC mp_obj_t mod_iyo_hwioc_set_diagnostic_brightness(mp_obj_t brightness) {
-    int r = hwioc_set_diagnostic_brightness(mp_obj_get_int(brightness));
-
-    if (r < 0) {
-        mp_raise_OSError(-r);
-    }
-
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwioc_set_diagnostic_brightness_obj, mod_iyo_hwioc_set_diagnostic_brightness);
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_set_led_diagnostic_obj, mod_iyo_hwio_set_led_diagnostic);
 
 STATIC mp_obj_t mod_iyo_hwio_get_fds(void) {
     int m_fd = hwioc_meter_update_fd();
@@ -89,8 +78,7 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_set_trim_level), MP_ROM_PTR(&mod_iyo_hwio_set_trim_level_obj) },
     { MP_ROM_QSTR(MP_QSTR_set_input_phantom_power), MP_ROM_PTR(&mod_iyo_hwio_set_input_phantom_power_obj) },
 
-    { MP_ROM_QSTR(MP_QSTR_set_diagnostic_rgb), MP_ROM_PTR(&mod_iyo_hwioc_set_diagnostic_rgb_obj) },
-    { MP_ROM_QSTR(MP_QSTR_set_diagnostic_brightness), MP_ROM_PTR(&mod_iyo_hwioc_set_diagnostic_brightness_obj) },
+    { MP_ROM_QSTR(MP_QSTR_set_led_diagnostic), MP_ROM_PTR(&mod_iyo_hwio_set_led_diagnostic_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_fds), MP_ROM_PTR(&mod_iyo_hwio_get_fds_obj) },
 };
