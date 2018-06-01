@@ -160,6 +160,7 @@ SRC_MOD += \
 	$(HWIO)/spi_transaction.c \
 	$(HWIO)/input_level_map.c \
 	$(HWIO)/dapi_simple_timer.c \
+	$(HWIO)/meter_ballistics.c \
 	$(HWIO)/ax_lite.c \
 	$(ASI2700_LIBS)/dsp/chip/ak4458.c \
 	$(XMOS)/../src/lib_asi_spi.c \
