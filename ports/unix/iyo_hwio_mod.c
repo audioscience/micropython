@@ -57,6 +57,17 @@ STATIC mp_obj_t mod_iyo_hwio_set_led_diagnostic(mp_obj_t enable, mp_obj_t rgb_pw
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_set_led_diagnostic_obj, mod_iyo_hwio_set_led_diagnostic);
 
+STATIC mp_obj_t mod_iyo_hwio_set_save_pending_flag(mp_obj_t pending) {
+    int r = hwioc_set_save_pending_flag(!!mp_obj_get_int(pending));
+
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_save_pending_flag_obj, mod_iyo_hwio_set_save_pending_flag);
+
 STATIC mp_obj_t mod_iyo_hwio_get_fds(void) {
     int m_fd = hwioc_meter_update_fd();
     int e_fd = hwioc_error_notification_fd();
@@ -79,6 +90,8 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_set_input_phantom_power), MP_ROM_PTR(&mod_iyo_hwio_set_input_phantom_power_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_set_led_diagnostic), MP_ROM_PTR(&mod_iyo_hwio_set_led_diagnostic_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_set_save_pending_flag), MP_ROM_PTR(&mod_iyo_hwio_set_save_pending_flag_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_fds), MP_ROM_PTR(&mod_iyo_hwio_get_fds_obj) },
 };
