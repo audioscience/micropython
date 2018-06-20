@@ -162,6 +162,7 @@ SRC_MOD += \
 	$(HWIO)/dapi_simple_timer.c \
 	$(HWIO)/meter_ballistics.c \
 	$(HWIO)/ax_lite.c \
+	$(HWIO)/logging.c \
 	$(ASI2700_LIBS)/dsp/chip/ak4458.c \
 	$(XMOS)/../src/lib_asi_spi.c \
 	$(XMOS)/../src/lib_asi_spi_i2c.c
