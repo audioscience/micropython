@@ -4,7 +4,7 @@
 
 
 STATIC mp_obj_t mod_os_hwio_init(void) {
-    int r = hwioc_init();
+    int r = hwioc_init(7);
 
     if (r < 0) {
         mp_raise_OSError(-r);
