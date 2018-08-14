@@ -222,7 +222,7 @@ STATIC mp_obj_t memoryview_make_new(const mp_obj_type_t *type_in, size_t n_args,
 
     // test if the object can be written to
     if (mp_get_buffer(args[0], &bufinfo, MP_BUFFER_RW)) {
-        self->typecode |= 0x80; // used to indicate writable buffer
+        self->typecode |= MP_OBJ_ARRAY_TYPECODE_FLAG_RW; // indicate writable buffer
     }
 
     return MP_OBJ_FROM_PTR(self);
@@ -270,10 +270,10 @@ STATIC mp_obj_t array_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs
         }
 
         case MP_BINARY_OP_CONTAINS: {
+            #if MICROPY_PY_BUILTINS_BYTEARRAY
+            // Can search string only in bytearray
             mp_buffer_info_t lhs_bufinfo;
             mp_buffer_info_t rhs_bufinfo;
-
-            // Can search string only in bytearray
             if (mp_get_buffer(rhs_in, &rhs_bufinfo, MP_BUFFER_READ)) {
                 if (!MP_OBJ_IS_TYPE(lhs_in, &mp_type_bytearray)) {
                     return mp_const_false;
@@ -282,6 +282,7 @@ STATIC mp_obj_t array_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs
                 return mp_obj_new_bool(
                     find_subbytes(lhs_bufinfo.buf, lhs_bufinfo.len, rhs_bufinfo.buf, rhs_bufinfo.len, 1) != NULL);
             }
+            #endif
 
             // Otherwise, can only look for a scalar numeric value in an array
             if (MP_OBJ_IS_INT(rhs_in) || mp_obj_is_float(rhs_in)) {
@@ -414,7 +415,7 @@ STATIC mp_obj_t array_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t value
                 uint8_t* dest_items = o->items;
                 #if MICROPY_PY_BUILTINS_MEMORYVIEW
                 if (o->base.type == &mp_type_memoryview) {
-                    if ((o->typecode & 0x80) == 0) {
+                    if (!(o->typecode & MP_OBJ_ARRAY_TYPECODE_FLAG_RW)) {
                         // store to read-only memoryview not allowed
                         return MP_OBJ_NULL;
                     }
@@ -471,7 +472,7 @@ STATIC mp_obj_t array_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t value
             #if MICROPY_PY_BUILTINS_MEMORYVIEW
             if (o->base.type == &mp_type_memoryview) {
                 index += o->free;
-                if (value != MP_OBJ_SENTINEL && (o->typecode & 0x80) == 0) {
+                if (value != MP_OBJ_SENTINEL && !(o->typecode & MP_OBJ_ARRAY_TYPECODE_FLAG_RW)) {
                     // store to read-only memoryview
                     return MP_OBJ_NULL;
                 }
@@ -497,7 +498,7 @@ STATIC mp_int_t array_get_buffer(mp_obj_t o_in, mp_buffer_info_t *bufinfo, mp_ui
     bufinfo->typecode = o->typecode & TYPECODE_MASK;
     #if MICROPY_PY_BUILTINS_MEMORYVIEW
     if (o->base.type == &mp_type_memoryview) {
-        if ((o->typecode & 0x80) == 0 && (flags & MP_BUFFER_WRITE)) {
+        if (!(o->typecode & MP_OBJ_ARRAY_TYPECODE_FLAG_RW) && (flags & MP_BUFFER_WRITE)) {
             // read-only memoryview
             return 1;
         }

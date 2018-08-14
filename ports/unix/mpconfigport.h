@@ -60,7 +60,7 @@
 #define MICROPY_DEBUG_PRINTERS      (1)
 // Printing debug to stderr may give tests which
 // check stdout a chance to pass, etc.
-#define MICROPY_DEBUG_PRINTER_DEST  mp_stderr_print
+#define MICROPY_DEBUG_PRINTER       (&mp_stderr_print)
 #define MICROPY_READER_POSIX        (1)
 #define MICROPY_USE_READLINE_HISTORY (1)
 #define MICROPY_HELPER_REPL         (1)
@@ -89,6 +89,7 @@
 #define MICROPY_PY_BUILTINS_NOTIMPLEMENTED (1)
 #define MICROPY_PY_BUILTINS_INPUT   (1)
 #define MICROPY_PY_BUILTINS_POW3    (1)
+#define MICROPY_PY_BUILTINS_ROUND_INT    (1)
 #define MICROPY_PY_MICROPYTHON_MEM_INFO (1)
 #define MICROPY_PY_ALL_SPECIAL_METHODS (1)
 #define MICROPY_PY_REVERSE_SPECIAL_METHODS (1)
@@ -110,6 +111,7 @@
 #define MICROPY_PY_MATH_SPECIAL_FUNCTIONS (1)
 #endif
 #define MICROPY_PY_CMATH            (1)
+#define MICROPY_PY_IO_IOBASE        (1)
 #define MICROPY_PY_IO_FILEIO        (1)
 #define MICROPY_PY_GC_COLLECT_RETVAL (1)
 #define MICROPY_MODULE_FROZEN_STR   (1)
@@ -134,6 +136,7 @@
 #define MICROPY_PY_UHASHLIB         (1)
 #if MICROPY_PY_USSL
 #define MICROPY_PY_UHASHLIB_SHA1    (1)
+#define MICROPY_PY_UCRYPTOLIB       (1)
 #endif
 #define MICROPY_PY_UBINASCII        (1)
 #define MICROPY_PY_UBINASCII_CRC32  (1)
@@ -189,9 +192,9 @@ extern const struct _mp_obj_module_t mp_module_jni;
 extern const struct _mp_obj_module_t mp_module_iyo_hwio;
 
 #if MICROPY_PY_UOS_VFS
-#define MICROPY_PY_UOS_VFS_DEF { MP_ROM_QSTR(MP_QSTR_uos_vfs), MP_ROM_PTR(&mp_module_uos_vfs) },
+#define MICROPY_PY_UOS_DEF { MP_ROM_QSTR(MP_QSTR_uos), MP_ROM_PTR(&mp_module_uos_vfs) },
 #else
-#define MICROPY_PY_UOS_VFS_DEF
+#define MICROPY_PY_UOS_DEF { MP_ROM_QSTR(MP_QSTR_uos), MP_ROM_PTR(&mp_module_os) },
 #endif
 #if MICROPY_PY_FFI
 #define MICROPY_PY_FFI_DEF { MP_ROM_QSTR(MP_QSTR_ffi), MP_ROM_PTR(&mp_module_ffi) },
@@ -231,7 +234,6 @@ extern const struct _mp_obj_module_t mp_module_iyo_hwio;
     MICROPY_PY_SOCKET_DEF \
     { MP_ROM_QSTR(MP_QSTR_uos), MP_ROM_PTR(&mp_module_os) }, \
     { MP_ROM_QSTR(MP_QSTR_iyo_hwio), MP_ROM_PTR(&mp_module_iyo_hwio) }, \
-    MICROPY_PY_UOS_VFS_DEF \
     MICROPY_PY_USELECT_DEF \
     MICROPY_PY_TERMIOS_DEF \
 
