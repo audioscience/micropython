@@ -13,6 +13,9 @@ ifneq ($(QSTR_AUTOGEN_DISABLE),1)
 QSTR_DEFS_COLLECTED = $(HEADER_BUILD)/qstrdefs.collected.h
 endif
 
+# Any files listed by this variable will cause a full regeneration of qstrs
+QSTR_GLOBAL_DEPENDENCIES += $(PY_SRC)/mpconfig.h mpconfigport.h
+
 # some code is performance bottleneck and compiled with other optimization options
 CSUPEROPT = -Os
 
@@ -23,7 +26,7 @@ ifeq ($(MICROPY_PY_USSL),1)
 CFLAGS_MOD += -DMICROPY_PY_USSL=1
 ifeq ($(MICROPY_SSL_AXTLS),1)
 CFLAGS_MOD += -DMICROPY_SSL_AXTLS=1 -I$(TOP)/lib/axtls/ssl -I$(TOP)/lib/axtls/crypto -I$(TOP)/lib/axtls/config
-LDFLAGS_MOD += -Lbuild -laxtls
+LDFLAGS_MOD += -L$(BUILD) -laxtls
 else ifeq ($(MICROPY_SSL_MBEDTLS),1)
 # Can be overridden by ports which have "builtin" mbedTLS
 MICROPY_SSL_MBEDTLS_INCLUDE ?= $(TOP)/lib/mbedtls/include
@@ -74,7 +77,7 @@ endif
 
 ifeq ($(MICROPY_PY_BTREE),1)
 BTREE_DIR = lib/berkeley-db-1.xx
-BTREE_DEFS = -D__DBINTERFACE_PRIVATE=1 -Dmpool_error=printf -Dabort=abort_ -Dvirt_fd_t=mp_obj_t "-DVIRT_FD_T_HEADER=<py/obj.h>" $(BTREE_DEFS_EXTRA)
+BTREE_DEFS = -D__DBINTERFACE_PRIVATE=1 -Dmpool_error=printf -Dabort=abort_ "-Dvirt_fd_t=void*" $(BTREE_DEFS_EXTRA)
 INC += -I$(TOP)/$(BTREE_DIR)/PORT/include
 SRC_MOD += extmod/modbtree.c
 SRC_MOD += $(addprefix $(BTREE_DIR)/,\
@@ -224,6 +227,7 @@ PY_EXTMOD_O_BASENAME = \
 	extmod/moduheapq.o \
 	extmod/modutimeq.o \
 	extmod/moduhashlib.o \
+	extmod/moducryptolib.o \
 	extmod/modubinascii.o \
 	extmod/modurandom.o \
 	extmod/moduselect.o \

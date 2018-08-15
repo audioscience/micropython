@@ -14,6 +14,7 @@ include boards/$(BOARD)/mpconfigboard.mk
 
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h $(BUILD)/pins_qstr.h $(BUILD)/modstm_qstr.h
+QSTR_GLOBAL_DEPENDENCIES = mpconfigboard_common.h boards/$(BOARD)/mpconfigboard.h
 
 # directory containing scripts to be frozen as bytecode
 FROZEN_MPY_DIR ?= modules
@@ -57,10 +58,15 @@ CFLAGS_CORTEX_M = -mthumb
 ifeq ($(CMSIS_MCU),$(filter $(CMSIS_MCU),STM32F767xx STM32F769xx STM32H743xx))
 CFLAGS_CORTEX_M += -mfpu=fpv5-d16 -mfloat-abi=hard
 else
+ifeq ($(MCU_SERIES),f0)
+CFLAGS_CORTEX_M += -msoft-float
+else
 CFLAGS_CORTEX_M += -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+endif
 endif
 
 # Options for particular MCU series
+CFLAGS_MCU_f0 = $(CFLAGS_CORTEX_M) -mtune=cortex-m0 -mcpu=cortex-m0
 CFLAGS_MCU_f4 = $(CFLAGS_CORTEX_M) -mtune=cortex-m4 -mcpu=cortex-m4
 CFLAGS_MCU_f7 = $(CFLAGS_CORTEX_M) -mtune=cortex-m7 -mcpu=cortex-m7
 CFLAGS_MCU_l4 = $(CFLAGS_CORTEX_M) -mtune=cortex-m4 -mcpu=cortex-m4
@@ -155,7 +161,6 @@ SRC_LIBM = $(addprefix lib/libm_dbl/,\
 else
 SRC_LIBM = $(addprefix lib/libm/,\
 	math.c \
-	thumb_vfp_sqrtf.c \
 	acoshf.c \
 	asinfacosf.c \
 	asinhf.c \
@@ -181,9 +186,15 @@ SRC_LIBM = $(addprefix lib/libm/,\
 	wf_lgamma.c \
 	wf_tgamma.c \
 	)
+ifeq ($(MCU_SERIES),f0)
+SRC_LIBM += lib/libm/ef_sqrt.c
+else
+SRC_LIBM += lib/libm/thumb_vfp_sqrtf.c
+endif
 endif
 
 EXTMOD_SRC_C = $(addprefix extmod/,\
+	modlwip.c \
 	modonewire.c \
         )
 
@@ -196,7 +207,6 @@ DRIVERS_SRC_C = $(addprefix drivers/,\
 
 SRC_C = \
 	main.c \
-	system_stm32.c \
 	stm32_it.c \
 	usbd_conf.c \
 	usbd_desc.c \
@@ -219,6 +229,7 @@ SRC_C = \
 	i2c.c \
 	pyb_i2c.c \
 	spi.c \
+	pyb_spi.c \
 	qspi.c \
 	uart.c \
 	can.c \
@@ -227,6 +238,7 @@ SRC_C = \
 	gccollect.c \
 	help.c \
 	machine_i2c.c \
+	machine_spi.c \
 	modmachine.c \
 	modpyb.c \
 	modstm.c \
@@ -243,6 +255,7 @@ SRC_C = \
 	spibdev.c \
 	storage.c \
 	sdcard.c \
+	sdram.c \
 	fatfs_port.c \
 	lcd.c \
 	accel.c \
@@ -251,10 +264,19 @@ SRC_C = \
 	adc.c \
 	$(wildcard boards/$(BOARD)/*.c)
 
+ifeq ($(MCU_SERIES),f0)
 SRC_O = \
 	$(STARTUP_FILE) \
+	system_stm32f0.o \
+	resethandler_m0.o \
+	gchelper_m0.o
+else
+SRC_O = \
+	$(STARTUP_FILE) \
+	system_stm32.o \
 	resethandler.o \
-	gchelper.o \
+	gchelper.o
+endif
 
 SRC_HAL = $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_,\
 	hal.c \
@@ -276,14 +298,27 @@ SRC_HAL = $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_,\
 	hal_rcc_ex.c \
 	hal_rtc.c \
 	hal_rtc_ex.c \
-	hal_sd.c \
 	hal_spi.c \
 	hal_tim.c \
 	hal_tim_ex.c \
 	hal_uart.c \
+	)
+
+ifeq ($(MCU_SERIES),$(filter $(MCU_SERIES),f4 f7 h7 l4))
+$(BUILD)/$(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_ll_usb.o: CFLAGS += -Wno-attributes
+SRC_HAL += $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_,\
+	hal_sd.c \
 	ll_sdmmc.c \
+	ll_fmc.c \
 	ll_usb.c \
 	)
+endif
+
+ifeq ($(MCU_SERIES),$(filter $(MCU_SERIES),f4 f7 h7))
+SRC_HAL += $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_,\
+	hal_sdram.c \
+	)
+endif
 
 ifeq ($(CMSIS_MCU),$(filter $(CMSIS_MCU),STM32H743xx))
     SRC_HAL += $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_, hal_fdcan.c)
@@ -305,7 +340,7 @@ ifneq ($(MICROPY_PY_WIZNET5K),0)
 WIZNET5K_DIR=drivers/wiznet5k
 INC += -I$(TOP)/$(WIZNET5K_DIR)
 CFLAGS_MOD += -DMICROPY_PY_WIZNET5K=$(MICROPY_PY_WIZNET5K) -D_WIZCHIP_=$(MICROPY_PY_WIZNET5K)
-SRC_MOD += modnwwiznet5k.c
+SRC_MOD += network_wiznet5k.c modnwwiznet5k.c
 SRC_MOD += $(addprefix $(WIZNET5K_DIR)/,\
 	ethernet/w$(MICROPY_PY_WIZNET5K)/w$(MICROPY_PY_WIZNET5K).c \
 	ethernet/wizchip_conf.c \
@@ -336,6 +371,47 @@ SRC_MOD += $(addprefix $(CC3000_DIR)/src/,\
 	patch_prog.c \
 	)
 endif
+
+LWIP_DIR = lib/lwip/src
+INC += -I$(TOP)/$(LWIP_DIR)/include -Ilwip_inc
+$(BUILD)/$(LWIP_DIR)/core/ipv4/dhcp.o: CFLAGS += -Wno-address
+SRC_MOD += $(addprefix $(LWIP_DIR)/,\
+	core/def.c \
+	core/dns.c \
+	core/inet_chksum.c \
+	core/init.c \
+	core/ip.c \
+	core/mem.c \
+	core/memp.c \
+	core/netif.c \
+	core/pbuf.c \
+	core/raw.c \
+	core/stats.c \
+	core/sys.c \
+	core/tcp.c \
+	core/tcp_in.c \
+	core/tcp_out.c \
+	core/timeouts.c \
+	core/udp.c \
+	core/ipv4/autoip.c \
+	core/ipv4/dhcp.c \
+	core/ipv4/etharp.c \
+	core/ipv4/icmp.c \
+	core/ipv4/igmp.c \
+	core/ipv4/ip4_addr.c \
+	core/ipv4/ip4.c \
+	core/ipv4/ip4_frag.c \
+	core/ipv6/dhcp6.c \
+	core/ipv6/ethip6.c \
+	core/ipv6/icmp6.c \
+	core/ipv6/inet6.c \
+	core/ipv6/ip6_addr.c \
+	core/ipv6/ip6.c \
+	core/ipv6/ip6_frag.c \
+	core/ipv6/mld6.c \
+	core/ipv6/nd6.c \
+	netif/ethernet.c \
+	)
 
 OBJ =
 OBJ += $(PY_O)
@@ -454,6 +530,7 @@ GEN_PINS_SRC = $(BUILD)/pins_$(BOARD).c
 GEN_PINS_HDR = $(HEADER_BUILD)/pins.h
 GEN_PINS_QSTR = $(BUILD)/pins_qstr.h
 GEN_PINS_AF_CONST = $(HEADER_BUILD)/pins_af_const.h
+GEN_PINS_AF_DEFS = $(HEADER_BUILD)/pins_af_defs.h
 GEN_PINS_AF_PY = $(BUILD)/pins_af.py
 
 INSERT_USB_IDS = $(TOP)/tools/insert-usb-ids.py
@@ -486,9 +563,9 @@ main.c: $(GEN_CDCINF_HEADER)
 
 # Use a pattern rule here so that make will only call make-pins.py once to make
 # both pins_$(BOARD).c and pins.h
-$(BUILD)/%_$(BOARD).c $(HEADER_BUILD)/%.h $(HEADER_BUILD)/%_af_const.h $(BUILD)/%_qstr.h: boards/$(BOARD)/%.csv $(MAKE_PINS) $(AF_FILE) $(PREFIX_FILE) | $(HEADER_BUILD)
+$(BUILD)/%_$(BOARD).c $(HEADER_BUILD)/%.h $(HEADER_BUILD)/%_af_const.h $(HEADER_BUILD)/%_af_defs.h $(BUILD)/%_qstr.h: boards/$(BOARD)/%.csv $(MAKE_PINS) $(AF_FILE) $(PREFIX_FILE) | $(HEADER_BUILD)
 	$(ECHO) "GEN $@"
-	$(Q)$(PYTHON) $(MAKE_PINS) --board $(BOARD_PINS) --af $(AF_FILE) --prefix $(PREFIX_FILE) --hdr $(GEN_PINS_HDR) --qstr $(GEN_PINS_QSTR) --af-const $(GEN_PINS_AF_CONST) --af-py $(GEN_PINS_AF_PY) > $(GEN_PINS_SRC)
+	$(Q)$(PYTHON) $(MAKE_PINS) --board $(BOARD_PINS) --af $(AF_FILE) --prefix $(PREFIX_FILE) --hdr $(GEN_PINS_HDR) --qstr $(GEN_PINS_QSTR) --af-const $(GEN_PINS_AF_CONST) --af-defs $(GEN_PINS_AF_DEFS) --af-py $(GEN_PINS_AF_PY) > $(GEN_PINS_SRC)
 
 $(BUILD)/pins_$(BOARD).o: $(BUILD)/pins_$(BOARD).c
 	$(call compile_c)

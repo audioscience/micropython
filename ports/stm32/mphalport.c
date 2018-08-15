@@ -19,7 +19,7 @@ NORETURN void mp_hal_raise(HAL_StatusTypeDef status) {
     mp_raise_OSError(mp_hal_status_to_errno_table[status]);
 }
 
-int mp_hal_stdin_rx_chr(void) {
+MP_WEAK int mp_hal_stdin_rx_chr(void) {
     for (;;) {
 #if 0
 #ifdef USE_HOST_MODE
@@ -52,7 +52,7 @@ void mp_hal_stdout_tx_str(const char *str) {
     mp_hal_stdout_tx_strn(str, strlen(str));
 }
 
-void mp_hal_stdout_tx_strn(const char *str, size_t len) {
+MP_WEAK void mp_hal_stdout_tx_strn(const char *str, size_t len) {
     if (MP_STATE_PORT(pyb_stdio_uart) != NULL) {
         uart_tx_strn(MP_STATE_PORT(pyb_stdio_uart), str, len);
     }
@@ -87,6 +87,7 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     }
 }
 
+#if __CORTEX_M >= 0x03
 void mp_hal_ticks_cpu_enable(void) {
     if (!(DWT->CTRL & DWT_CTRL_CYCCNTENA_Msk)) {
         CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
@@ -98,9 +99,10 @@ void mp_hal_ticks_cpu_enable(void) {
         DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
     }
 }
+#endif
 
 void mp_hal_gpio_clock_enable(GPIO_TypeDef *gpio) {
-    #if defined(STM32L476xx) || defined(STM32L486xx)
+    #if defined(STM32L476xx) || defined(STM32L496xx)
     if (gpio == GPIOG) {
         // Port G pins 2 thru 15 are powered using VddIO2 on these MCUs.
         HAL_PWREx_EnableVddIO2();
@@ -109,7 +111,10 @@ void mp_hal_gpio_clock_enable(GPIO_TypeDef *gpio) {
 
     // This logic assumes that all the GPIOx_EN bits are adjacent and ordered in one register
 
-    #if defined(STM32F4) || defined(STM32F7)
+    #if defined(STM32F0)
+    #define AHBxENR AHBENR
+    #define AHBxENR_GPIOAEN_Pos RCC_AHBENR_GPIOAEN_Pos
+    #elif defined(STM32F4) || defined(STM32F7)
     #define AHBxENR AHB1ENR
     #define AHBxENR_GPIOAEN_Pos RCC_AHB1ENR_GPIOAEN_Pos
     #elif defined(STM32H7)
