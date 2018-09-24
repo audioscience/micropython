@@ -57,6 +57,28 @@ STATIC mp_obj_t mod_iyo_hwio_set_led_diagnostic(mp_obj_t enable, mp_obj_t rgb_pw
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_set_led_diagnostic_obj, mod_iyo_hwio_set_led_diagnostic);
 
+STATIC mp_obj_t mod_iyo_hwio_toggle_aes67_transmitter(mp_obj_t index, mp_obj_t enable) {
+    int r = hwioc_toggle_aes67_transmitter(mp_obj_get_int(index), !!mp_obj_get_int(enable));
+
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_toggle_aes67_transmitter_obj, mod_iyo_hwio_toggle_aes67_transmitter);
+
+STATIC mp_obj_t mod_iyo_hwio_subscribe_rx_ch_to_aes67_transmitter(mp_obj_t rx_ch_idx, mp_obj_t tx_flow_ip, mp_obj_t tx_flow_idx) {
+    int r = hwioc_subscribe_rx_ch_to_aes67_transmitter(mp_obj_get_int(rx_ch_idx), mp_obj_str_get_str(tx_flow_ip), mp_obj_get_int(tx_flow_idx));
+
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_3(mod_iyo_hwio_subscribe_rx_ch_to_aes67_transmitter_obj, mod_iyo_hwio_subscribe_rx_ch_to_aes67_transmitter);
+
 STATIC mp_obj_t mod_iyo_hwio_set_save_pending_flag(mp_obj_t pending) {
     int r = hwioc_set_save_pending_flag(!!mp_obj_get_int(pending));
 
@@ -93,10 +115,12 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_send_identify_cmd_obj, mod_iyo_hwi
 STATIC mp_obj_t mod_iyo_hwio_get_fds(void) {
     int m_fd = hwioc_meter_update_fd();
     int e_fd = hwioc_error_notification_fd();
+    int a_fd = hwioc_aes67_tx_discovery_fd();
 
-    mp_obj_tuple_t *t = MP_OBJ_TO_PTR(mp_obj_new_tuple(2, NULL));
+    mp_obj_tuple_t *t = MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL));
     t->items[0] = mp_obj_new_int(m_fd);
     t->items[1] = mp_obj_new_int(e_fd);
+    t->items[2] = mp_obj_new_int(a_fd);
 
     return MP_OBJ_FROM_PTR(t);
 }
@@ -115,15 +139,44 @@ STATIC mp_obj_t mod_iyo_hwio_get_dev_status(void) {
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_get_dev_status_obj, mod_iyo_hwio_get_dev_status);
 
 STATIC mp_obj_t mod_iyo_hwio_get_mac_address(void) {
-    int i;
-    mp_obj_tuple_t *t = MP_OBJ_TO_PTR(mp_obj_new_tuple(6, NULL));
-    for (i = 0; i < 6; i++) {
-        t->items[i] = mp_obj_new_int(hwioc_get_mac_address_byte(i));
+    uint8_t * mac = hwioc_get_mac_address();
+    if (!mac) {
+        mp_raise_OSError(-1);
     }
 
-    return MP_OBJ_FROM_PTR(t);
+    return MP_OBJ_FROM_PTR(mp_obj_new_bytearray(6, mac));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_get_mac_address_obj, mod_iyo_hwio_get_mac_address);
+
+STATIC mp_obj_t mod_iyo_hwio_get_tx_ch_aes67_transport_ip(mp_obj_t index) {
+    uint8_t * ip = hwioc_get_tx_ch_aes67_transport_ip(mp_obj_get_int(index));
+    if (!ip) {
+        mp_raise_OSError(-1);
+    }
+   
+    return MP_OBJ_FROM_PTR(mp_obj_new_bytearray(4, ip));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_get_tx_ch_aes67_transport_ip_obj, mod_iyo_hwio_get_tx_ch_aes67_transport_ip);
+
+STATIC mp_obj_t mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip(mp_obj_t index) {
+    uint8_t * ip = hwioc_get_rx_ch_aes67_sub_transport_ip(mp_obj_get_int(index));
+    if (!ip) {
+        mp_raise_OSError(-1);
+    }
+   
+    return MP_OBJ_FROM_PTR(mp_obj_new_bytearray(4, ip));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip_obj, mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip);
+
+STATIC mp_obj_t mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index(mp_obj_t index) {
+    int ch_idx = hwioc_get_rx_ch_aes67_sub_channel_index(mp_obj_get_int(index));
+    if (ch_idx < 0) {
+        mp_raise_OSError(-1);
+    }
+
+    return MP_OBJ_FROM_PTR(mp_obj_new_int(ch_idx));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index_obj, mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index);
 
 STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_iyo_hwio) },
@@ -146,6 +199,16 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_get_dev_status), MP_ROM_PTR(&mod_iyo_hwio_get_dev_status_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_mac_address), MP_ROM_PTR(&mod_iyo_hwio_get_mac_address_obj) },    
+
+    { MP_ROM_QSTR(MP_QSTR_get_tx_ch_aes67_transport_ip), MP_ROM_PTR(&mod_iyo_hwio_get_tx_ch_aes67_transport_ip_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_toggle_aes67_transmitter), MP_ROM_PTR(&mod_iyo_hwio_toggle_aes67_transmitter_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_get_rx_ch_aes67_sub_transport_ip), MP_ROM_PTR(&mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_get_rx_ch_aes67_sub_channel_index), MP_ROM_PTR(&mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_subscribe_rx_ch_to_aes67_transmitter), MP_ROM_PTR(&mod_iyo_hwio_subscribe_rx_ch_to_aes67_transmitter_obj) },   
 };
 STATIC MP_DEFINE_CONST_DICT(mp_module_iyo_hwio_globals, mp_module_iyo_hwio_globals_table);
 
