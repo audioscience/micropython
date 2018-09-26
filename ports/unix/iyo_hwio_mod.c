@@ -68,6 +68,16 @@ STATIC mp_obj_t mod_iyo_hwio_set_save_pending_flag(mp_obj_t pending) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_save_pending_flag_obj, mod_iyo_hwio_set_save_pending_flag);
 
+STATIC mp_obj_t mod_iyo_hwio_get_dante_device_name(void) {
+    char * name = hwioc_get_dante_device_name();
+    if (!name) {
+        mp_raise_OSError(-1);
+    }
+
+    return MP_OBJ_FROM_PTR(MP_OBJ_NEW_QSTR(qstr_from_str(name)));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_get_dante_device_name_obj, mod_iyo_hwio_get_dante_device_name);
+
 STATIC mp_obj_t mod_iyo_hwio_send_reboot_cmd(void) {
     int r = hwioc_send_device_reboot_cmd();
 
@@ -146,6 +156,8 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_get_dev_status), MP_ROM_PTR(&mod_iyo_hwio_get_dev_status_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_mac_address), MP_ROM_PTR(&mod_iyo_hwio_get_mac_address_obj) },    
+
+    { MP_ROM_QSTR(MP_QSTR_get_dante_device_name), MP_ROM_PTR(&mod_iyo_hwio_get_dante_device_name_obj) },     
 };
 STATIC MP_DEFINE_CONST_DICT(mp_module_iyo_hwio_globals, mp_module_iyo_hwio_globals_table);
 
