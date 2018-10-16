@@ -136,6 +136,36 @@ STATIC mp_obj_t mod_iyo_hwio_get_fds(void) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_get_fds_obj, mod_iyo_hwio_get_fds);
 
+STATIC mp_obj_t mod_iyo_hwio_set_front_panel_full_brightness(void) {
+    int r = hwioc_set_front_panel_full_brightness();
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_set_front_panel_full_brightness_obj, mod_iyo_hwio_set_front_panel_full_brightness);
+
+STATIC mp_obj_t mod_iyo_hwio_set_front_panel_brightness_dimmer(void) {
+    int r = hwioc_set_front_panel_brightness_dimmer();
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_set_front_panel_brightness_dimmer_obj, mod_iyo_hwio_set_front_panel_brightness_dimmer);
+
+STATIC mp_obj_t mod_iyo_hwio_set_front_panel_brightness_dimmest(void) {
+    int r = hwioc_set_front_panel_brightness_dimmest();
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_set_front_panel_brightness_dimmest_obj, mod_iyo_hwio_set_front_panel_brightness_dimmest);
+
 STATIC mp_obj_t mod_iyo_hwio_get_dev_status(void) {
     int dev_sync_status = hwioc_get_device_sync_status();
     int dev_sys_status = hwioc_get_device_sys_status();
@@ -221,6 +251,12 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_get_rx_ch_aes67_sub_channel_index), MP_ROM_PTR(&mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_subscribe_rx_ch_to_aes67_transmitter), MP_ROM_PTR(&mod_iyo_hwio_subscribe_rx_ch_to_aes67_transmitter_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_set_front_panel_full_brightness), MP_ROM_PTR(&mod_iyo_hwio_set_front_panel_full_brightness_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_set_front_panel_brightness_dimmer), MP_ROM_PTR(&mod_iyo_hwio_set_front_panel_brightness_dimmer_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_set_front_panel_brightness_dimmest), MP_ROM_PTR(&mod_iyo_hwio_set_front_panel_brightness_dimmest_obj) },
 
 };
 STATIC MP_DEFINE_CONST_DICT(mp_module_iyo_hwio_globals, mp_module_iyo_hwio_globals_table);
