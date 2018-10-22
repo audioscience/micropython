@@ -173,7 +173,7 @@ STATIC mp_obj_t mod_iyo_hwio_get_tx_ch_aes67_transport_ip(mp_obj_t index) {
     if (!ip) {
         mp_raise_OSError(-1);
     }
-   
+
     return MP_OBJ_FROM_PTR(mp_obj_new_bytearray(4, ip));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_get_tx_ch_aes67_transport_ip_obj, mod_iyo_hwio_get_tx_ch_aes67_transport_ip);
@@ -183,7 +183,7 @@ STATIC mp_obj_t mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip(mp_obj_t index) {
     if (!ip) {
         mp_raise_OSError(-1);
     }
-   
+
     return MP_OBJ_FROM_PTR(mp_obj_new_bytearray(4, ip));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip_obj, mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip);
@@ -218,9 +218,9 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
 
     { MP_ROM_QSTR(MP_QSTR_get_dev_status), MP_ROM_PTR(&mod_iyo_hwio_get_dev_status_obj) },
 
-    { MP_ROM_QSTR(MP_QSTR_get_mac_address), MP_ROM_PTR(&mod_iyo_hwio_get_mac_address_obj) },    
+    { MP_ROM_QSTR(MP_QSTR_get_mac_address), MP_ROM_PTR(&mod_iyo_hwio_get_mac_address_obj) },
 
-    { MP_ROM_QSTR(MP_QSTR_get_dante_device_name), MP_ROM_PTR(&mod_iyo_hwio_get_dante_device_name_obj) },     
+    { MP_ROM_QSTR(MP_QSTR_get_dante_device_name), MP_ROM_PTR(&mod_iyo_hwio_get_dante_device_name_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_tx_ch_aes67_transport_ip), MP_ROM_PTR(&mod_iyo_hwio_get_tx_ch_aes67_transport_ip_obj) },
 
