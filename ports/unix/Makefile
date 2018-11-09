@@ -137,18 +137,18 @@ ASI2700_ROOT = ../../../..
 HWIO = $(realpath ${ASI2700_ROOT}/Dante/hwio)
 XMOS = $(ASI2700_ROOT)/Dante/xmos/lib_asi/api
 ASI2700_LIBS = $(ASI2700_ROOT)/libs
-CFLAGS_MOD += -I$(ASI2700_ROOT)/Dante \
-	-I$(ASI2700_ROOT)/libs/dante-bbe/dev/include \
+CFLAGS_MOD += -I$(ASI2700_ROOT)/Dante
+SRC_MOD += iyo_hwio_mod.c
+
+ifeq ($(CROSS_COMPILE),microblaze-uclinux-)
+
+CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/dante-bbe/dev/include \
 	-I$(ASI2700_ROOT)/libs/dante-bbe/dev/include/linux-2.4.x \
 	-I$(ASI2700_LIBS)
 
-#CFLAGS += -fno-strict-aliasing
-
-
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/dante-bbe/dev/lib -ldapi -ldns_sd
-SRC_MOD += \
-	iyo_hwio_mod.c \
-	$(HWIO)/hwioc.c \
+
+SRC_MOD += $(HWIO)/hwioc.c \
 	$(HWIO)/queue_spi.c \
 	$(HWIO)/xmos_firmware.c \
 	$(HWIO)/adapter_info.c \
@@ -165,6 +165,12 @@ SRC_MOD += \
 	$(ASI2700_LIBS)/dsp/chip/ak4458.c \
 	$(XMOS)/../src/lib_asi_spi.c \
 	$(XMOS)/../src/lib_asi_spi_i2c.c
+
+else
+
+SRC_MOD += $(HWIO)/dummy_hwioc.c
+
+endif
 
 # source files
 SRC_C = \
