@@ -158,6 +158,13 @@ STATIC mp_obj_t mod_iyo_hwio_get_dev_status(void) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_get_dev_status_obj, mod_iyo_hwio_get_dev_status);
 
+STATIC mp_obj_t mod_iyo_hwio_get_dev_temp(void) {
+    int dev_temp = hwioc_get_device_temp();
+
+    return MP_OBJ_FROM_PTR(mp_obj_new_int(dev_temp));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_get_dev_temp_obj, mod_iyo_hwio_get_dev_temp);
+
 STATIC mp_obj_t mod_iyo_hwio_get_mac_address(void) {
     uint8_t * mac = hwioc_get_mac_address();
     if (!mac) {
@@ -217,6 +224,8 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_get_fds), MP_ROM_PTR(&mod_iyo_hwio_get_fds_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_dev_status), MP_ROM_PTR(&mod_iyo_hwio_get_dev_status_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_get_dev_temp), MP_ROM_PTR(&mod_iyo_hwio_get_dev_temp_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_mac_address), MP_ROM_PTR(&mod_iyo_hwio_get_mac_address_obj) },
 
