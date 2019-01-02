@@ -158,12 +158,12 @@ STATIC mp_obj_t mod_iyo_hwio_set_front_panel_brightness(mp_obj_t brightness) {
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_front_panel_brightness_obj, mod_iyo_hwio_set_front_panel_brightness);
 
 STATIC mp_obj_t mod_iyo_hwio_get_dev_status(void) {
-    int dev_sync_status = hwioc_get_device_sync_status();
-    int dev_sys_status = hwioc_get_device_sys_status();
+    char * dev_sync_status = hwioc_get_device_sync_status();
+    char * dev_sys_status = hwioc_get_device_sys_status();
 
     mp_obj_tuple_t *t = MP_OBJ_TO_PTR(mp_obj_new_tuple(2, NULL));
-    t->items[0] = mp_obj_new_int(dev_sync_status);
-    t->items[1] = mp_obj_new_int(dev_sys_status);
+    t->items[0] = MP_OBJ_NEW_QSTR(qstr_from_str(dev_sync_status));
+    t->items[1] = MP_OBJ_NEW_QSTR(qstr_from_str(dev_sys_status));
 
     return MP_OBJ_FROM_PTR(t);
 }
