@@ -122,8 +122,8 @@ STATIC mp_obj_t mod_iyo_hwio_send_reboot_cmd(void) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_send_reboot_cmd_obj, mod_iyo_hwio_send_reboot_cmd);
 
-STATIC mp_obj_t mod_iyo_hwio_send_identify_cmd(void) {
-    int r = hwioc_send_device_identify_cmd();
+STATIC mp_obj_t mod_iyo_hwio_send_identify_cmd(mp_obj_t enable) {
+    int r = hwioc_send_device_identify_cmd(!!mp_obj_get_int(enable));
 
     if (r < 0) {
         mp_raise_OSError(-r);
@@ -131,7 +131,7 @@ STATIC mp_obj_t mod_iyo_hwio_send_identify_cmd(void) {
 
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_send_identify_cmd_obj, mod_iyo_hwio_send_identify_cmd);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_send_identify_cmd_obj, mod_iyo_hwio_send_identify_cmd);
 
 STATIC mp_obj_t mod_iyo_hwio_get_fds(void) {
     int m_fd = hwioc_meter_update_fd();
