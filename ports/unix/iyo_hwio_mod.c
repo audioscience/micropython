@@ -216,6 +216,16 @@ STATIC mp_obj_t mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index(mp_obj_t index) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index_obj, mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index);
 
+STATIC mp_obj_t mod_iyo_hwio_get_rx_ch_aes67_sub_connections_active(mp_obj_t index) {
+    int connections_active = hwioc_get_rx_ch_aes67_sub_connections_active(mp_obj_get_int(index));
+    if (connections_active < 0) {
+        mp_raise_OSError(-1);
+    }
+
+    return MP_OBJ_FROM_PTR(mp_obj_new_int(connections_active));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_get_rx_ch_aes67_sub_connections_active_obj, mod_iyo_hwio_get_rx_ch_aes67_sub_connections_active);
+
 STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_iyo_hwio) },
     { MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&mod_iyo_hwio_init_obj) },
@@ -251,6 +261,8 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_get_rx_ch_aes67_sub_transport_ip), MP_ROM_PTR(&mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_rx_ch_aes67_sub_channel_index), MP_ROM_PTR(&mod_iyo_hwio_get_rx_ch_aes67_sub_channel_index_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_get_rx_ch_aes67_sub_connections_active), MP_ROM_PTR(&mod_iyo_hwio_get_rx_ch_aes67_sub_connections_active_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_subscribe_rx_ch_to_aes67_transmitter), MP_ROM_PTR(&mod_iyo_hwio_subscribe_rx_ch_to_aes67_transmitter_obj) },
 
