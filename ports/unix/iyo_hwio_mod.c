@@ -122,6 +122,17 @@ STATIC mp_obj_t mod_iyo_hwio_send_reboot_cmd(void) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_send_reboot_cmd_obj, mod_iyo_hwio_send_reboot_cmd);
 
+STATIC mp_obj_t mod_iyo_hwio_signal_objects_restore_done(void) {
+    int r = hwioc_signal_objects_restore_done();
+
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_signal_objects_restore_done_obj, mod_iyo_hwio_signal_objects_restore_done);
+
 STATIC mp_obj_t mod_iyo_hwio_send_identify_cmd(mp_obj_t enable) {
     int r = hwioc_send_device_identify_cmd(!!mp_obj_get_int(enable));
 
@@ -241,6 +252,8 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_set_save_pending_flag), MP_ROM_PTR(&mod_iyo_hwio_set_save_pending_flag_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_send_reboot_cmd), MP_ROM_PTR(&mod_iyo_hwio_send_reboot_cmd_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_signal_objects_restore_done), MP_ROM_PTR(&mod_iyo_hwio_signal_objects_restore_done_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_send_identify_cmd), MP_ROM_PTR(&mod_iyo_hwio_send_identify_cmd_obj) },
 
