@@ -79,17 +79,6 @@ STATIC mp_obj_t mod_iyo_hwio_set_led_diagnostic(mp_obj_t enable, mp_obj_t rgb_pw
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_set_led_diagnostic_obj, mod_iyo_hwio_set_led_diagnostic);
 
-STATIC mp_obj_t mod_iyo_hwio_toggle_aes67_transmitter(mp_obj_t index, mp_obj_t enable) {
-    int r = hwioc_toggle_aes67_transmitter(mp_obj_get_int(index), !!mp_obj_get_int(enable));
-
-    if (r < 0) {
-        mp_raise_OSError(-r);
-    }
-
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_toggle_aes67_transmitter_obj, mod_iyo_hwio_toggle_aes67_transmitter);
-
 STATIC mp_obj_t mod_iyo_hwio_subscribe_rx_ch_to_aes67_transmitter(mp_obj_t rx_ch_idx, mp_obj_t tx_flow_ip, mp_obj_t tx_flow_idx) {
     int r = hwioc_subscribe_rx_ch_to_aes67_transmitter(mp_obj_get_int(rx_ch_idx), mp_obj_str_get_str(tx_flow_ip), mp_obj_get_int(tx_flow_idx));
 
@@ -327,8 +316,6 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_get_tx_ch_aes67_transport_ip), MP_ROM_PTR(&mod_iyo_hwio_get_tx_ch_aes67_transport_ip_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_tx_ch_aes67_flow_channel), MP_ROM_PTR(&mod_iyo_hwio_get_tx_ch_aes67_flow_channel_obj) },
-
-    { MP_ROM_QSTR(MP_QSTR_toggle_aes67_transmitter), MP_ROM_PTR(&mod_iyo_hwio_toggle_aes67_transmitter_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_rx_ch_aes67_sub_transport_ip), MP_ROM_PTR(&mod_iyo_hwio_get_rx_ch_aes67_sub_transport_ip_obj) },
 
