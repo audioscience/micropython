@@ -101,8 +101,8 @@ STATIC mp_obj_t mod_iyo_hwio_add_aes67_transmit_flow(mp_obj_t session_name, mp_o
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(mod_iyo_hwio_add_aes67_transmit_flow_obj, mod_iyo_hwio_add_aes67_transmit_flow);
 
-STATIC mp_obj_t mod_iyo_hwio_delete_aes67_transmit_flow(mp_obj_t session_name) {
-    int r = hwioc_delete_aes67_transmit_flow(mp_obj_str_get_str(session_name));
+STATIC mp_obj_t mod_iyo_hwio_delete_aes67_transmit_flow(mp_obj_t base_ch_idx, mp_obj_t channel_count) {
+    int r = hwioc_delete_aes67_transmit_flow(mp_obj_get_int(base_ch_idx), mp_obj_get_int(channel_count));
 
     if (r < 0) {
         mp_raise_OSError(-r);
@@ -110,7 +110,7 @@ STATIC mp_obj_t mod_iyo_hwio_delete_aes67_transmit_flow(mp_obj_t session_name) {
 
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_delete_aes67_transmit_flow_obj, mod_iyo_hwio_delete_aes67_transmit_flow);
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_delete_aes67_transmit_flow_obj, mod_iyo_hwio_delete_aes67_transmit_flow);
 
 STATIC mp_obj_t mod_iyo_hwio_set_save_pending_flag(mp_obj_t pending) {
     int r = hwioc_set_save_pending_flag(!!mp_obj_get_int(pending));
