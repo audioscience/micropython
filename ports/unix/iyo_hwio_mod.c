@@ -101,8 +101,8 @@ STATIC mp_obj_t mod_iyo_hwio_delete_aes67_transmit_flow(mp_obj_t base_ch_idx, mp
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_delete_aes67_transmit_flow_obj, mod_iyo_hwio_delete_aes67_transmit_flow);
 
-STATIC mp_obj_t mod_iyo_hwio_add_aes67_receive_flow(mp_obj_t rx_sub_ip, mp_obj_t channels) {
-    int r = hwioc_add_aes67_receive_flow(mp_obj_str_get_str(rx_sub_ip), mp_obj_str_get_str(channels));
+STATIC mp_obj_t mod_iyo_hwio_add_aes67_receive_flow(mp_obj_t rx_sub_ip, mp_obj_t base_ch_idx, mp_obj_t channel_count) {
+    int r = hwioc_add_aes67_receive_flow(mp_obj_str_get_str(rx_sub_ip), mp_obj_get_int(base_ch_idx), mp_obj_get_int(channel_count));
 
     if (r < 0) {
         mp_raise_OSError(-r);
@@ -110,7 +110,7 @@ STATIC mp_obj_t mod_iyo_hwio_add_aes67_receive_flow(mp_obj_t rx_sub_ip, mp_obj_t
 
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_add_aes67_receive_flow_obj, mod_iyo_hwio_add_aes67_receive_flow);
+STATIC MP_DEFINE_CONST_FUN_OBJ_3(mod_iyo_hwio_add_aes67_receive_flow_obj, mod_iyo_hwio_add_aes67_receive_flow);
 
 STATIC mp_obj_t mod_iyo_hwio_delete_aes67_receive_flow(mp_obj_t rx_sub_ip) {
     int r = hwioc_delete_aes67_receive_flow(mp_obj_str_get_str(rx_sub_ip));
