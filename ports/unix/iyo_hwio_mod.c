@@ -46,6 +46,17 @@ STATIC mp_obj_t mod_iyo_hwio_set_input_phantom_power(mp_obj_t index, mp_obj_t en
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_set_input_phantom_power_obj, mod_iyo_hwio_set_input_phantom_power);
 
+STATIC mp_obj_t mod_iyo_hwio_set_gpo(mp_obj_t index, mp_obj_t bits) {
+    int r = hwioc_set_gpo(mp_obj_get_int(index), mp_obj_get_int(bits));
+
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_set_gpo_obj, mod_iyo_hwio_set_gpo);
+
 STATIC mp_obj_t mod_iyo_hwio_set_input_mute(mp_obj_t index, mp_obj_t enable) {
     int r = hwioc_set_input_mute(mp_obj_get_int(index), !!mp_obj_get_int(enable));
 
@@ -204,6 +215,8 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
 
     { MP_ROM_QSTR(MP_QSTR_set_trim_level), MP_ROM_PTR(&mod_iyo_hwio_set_trim_level_obj) },
     { MP_ROM_QSTR(MP_QSTR_set_input_phantom_power), MP_ROM_PTR(&mod_iyo_hwio_set_input_phantom_power_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_set_gpo), MP_ROM_PTR(&mod_iyo_hwio_set_gpo_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_set_input_mute), MP_ROM_PTR(&mod_iyo_hwio_set_input_mute_obj) },
 
