@@ -135,7 +135,7 @@ endif
 
 ASI2700_ROOT = ../../../..
 HWIO = $(realpath ${ASI2700_ROOT}/audio_protocols/Dante/hwio)
-XMOS = $(ASI2700_ROOT)/audio_protocols/Dante/xmos/lib_asi/api
+XMOS = $(ASI2700_ROOT)/xmos/lib_asi/api
 ASI2700_LIBS = $(ASI2700_ROOT)/libs
 CFLAGS_MOD += -I$(ASI2700_ROOT)/audio_protocols/Dante
 SRC_MOD += iyo_hwio_mod.c
@@ -144,7 +144,8 @@ ifeq ($(CROSS_COMPILE),microblaze-uclinux-)
 
 CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/dante-bbe/dev/include \
 	-I$(ASI2700_ROOT)/libs/dante-bbe/dev/include/linux-2.4.x \
-	-I$(ASI2700_LIBS)
+	-I$(ASI2700_LIBS) \
+	-I$(ASI2700_ROOT) \
 
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/dante-bbe/dev/lib -ldapi -ldns_sd
 
