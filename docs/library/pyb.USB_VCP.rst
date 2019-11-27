@@ -1,9 +1,10 @@
 .. currentmodule:: pyb
+.. _pyb.USB_VCP:
 
 class USB_VCP -- USB virtual comm port
 ======================================
 
-The USB_VCP class allows creation of an object representing the USB
+The USB_VCP class allows creation of a `stream`-like object representing the USB
 virtual comm port.  It can be used to read and write data over USB to
 the connected host.
 
@@ -44,15 +45,11 @@ Methods
 .. method:: USB_VCP.read([nbytes])
 
    Read at most ``nbytes`` from the serial device and return them as a
-   bytes object.  If ``nbytes`` is not specified then the method acts as
-   ``readall()``. USB_VCP stream implicitly works in non-blocking mode,
+   bytes object.  If ``nbytes`` is not specified then the method reads
+   all available bytes from the serial device.
+   USB_VCP `stream` implicitly works in non-blocking mode,
    so if no pending data available, this method will return immediately
    with ``None`` value.
-
-.. method:: USB_VCP.readall()
-
-   Read all available bytes from the serial device and return them as
-   a bytes object, or ``None`` if no pending data available.
 
 .. method:: USB_VCP.readinto(buf, [maxlen])
 
