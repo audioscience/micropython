@@ -177,7 +177,7 @@ STATIC void ubus_lookup_handler(struct ubus_context *ctx,
     if (py_cb_func == mp_const_none)
         return;
     mp_obj_tuple_t *t = MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL));
-    t->items[0] = mp_obj_new_str(obj->path, strlen(obj->path), false);
+    t->items[0] = mp_obj_new_str(obj->path, strlen(obj->path));
     t->items[1] = mp_obj_new_int(obj->id);
     t->items[2] = mp_obj_new_int(obj->type_id);
     mp_call_function_1_protected(py_cb_func, MP_OBJ_FROM_PTR(t));
@@ -439,7 +439,7 @@ STATIC int ubus_notification_handler(struct ubus_context *ctx, struct ubus_objec
     const mp_obj_t args[4] = {
         MP_OBJ_FROM_PTR(_ctx),
         MP_OBJ_FROM_PTR(_sub),
-        mp_obj_new_str(method, strlen(method), false),
+        mp_obj_new_str(method, strlen(method)),
         msg ? mp_obj_new_bytes(blob_data(msg), blob_len(msg)) : mp_const_none,
     };
     mp_call_function_n_kw_protected(_sub->notification_cb, 4, 0, args);
@@ -480,7 +480,7 @@ STATIC void ubus_event_handler(struct ubus_context *ctx, struct ubus_event_handl
     const mp_obj_t args[4] = {
         MP_OBJ_FROM_PTR(_ctx),
         MP_OBJ_FROM_PTR(_ev),
-        mp_obj_new_str(type, strlen(type), false),
+        mp_obj_new_str(type, strlen(type)),
         msg ? mp_obj_new_bytes(blob_data(msg), blob_len(msg)) : mp_const_none,
     };
     mp_call_function_n_kw_protected(_ev->ev_cb, 4, 0, args);
@@ -618,7 +618,7 @@ STATIC int obj_method_handler(struct ubus_context *ctx, struct ubus_object *obj,
         MP_OBJ_FROM_PTR(_ctx),
         MP_OBJ_FROM_PTR(_obj),
         mp_obj_new_int((intptr_t)req),
-        mp_obj_new_str(method, strlen(method), false),
+        mp_obj_new_str(method, strlen(method)),
         msg ? mp_obj_new_bytes(blob_data(msg), blob_len(msg)) : mp_const_none,
     };
     mp_obj_t res = mp_call_function_n_kw_protected(_obj->method_cb, 5, 0, args);
@@ -710,7 +710,7 @@ STATIC mp_obj_t append_blobmsg_element(mp_obj_t list, struct blob_attr *attr) {
             elem = mp_obj_new_int(*(uint64_t *)data);
             break;
         case BLOBMSG_TYPE_STRING:
-            elem = mp_obj_new_str(data, len-1, false);
+            elem = mp_obj_new_str(data, len-1);
             break;
         case BLOBMSG_TYPE_ARRAY:
             elem = blobmsg_to_sequence(data, len);
@@ -741,7 +741,7 @@ STATIC mp_obj_t append_blobmsg_element(mp_obj_t list, struct blob_attr *attr) {
             elem = mp_obj_new_int(*(uint64_t *)data);
             break;
         case BLOB_ATTR_STRING:
-            elem = mp_obj_new_str(data, len-1, false);
+            elem = mp_obj_new_str(data, len-1);
             break;
         }
     }
@@ -753,7 +753,7 @@ STATIC mp_obj_t append_blobmsg_element(mp_obj_t list, struct blob_attr *attr) {
         if (!slen)
             goto append;
         mp_obj_tuple_t *t = MP_OBJ_TO_PTR(mp_obj_new_tuple(2, NULL));
-        t->items[0] = mp_obj_new_str(name, slen, false);
+        t->items[0] = mp_obj_new_str(name, slen);
         t->items[1] = elem;
         elem = MP_OBJ_FROM_PTR(t);
     }
