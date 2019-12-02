@@ -121,7 +121,7 @@ NORETURN void nlr_jump(void *val) {
     :                               // clobbered registers
     );
 
-    #if defined(__GNUC__)
+    #if defined(__GNUC__) && (__GNUC__ > 4)
     __builtin_unreachable();
     #else
     for (;;); // needed to silence compiler warning
