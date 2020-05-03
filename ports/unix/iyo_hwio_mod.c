@@ -208,6 +208,16 @@ STATIC mp_obj_t mod_iyo_hwio_set_front_panel_brightness(mp_obj_t brightness) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_front_panel_brightness_obj, mod_iyo_hwio_set_front_panel_brightness);
 
+STATIC mp_obj_t mod_iyo_hwio_set_front_panel_phantom_power_indication(mp_obj_t enable) {
+    int r = hwioc_set_front_panel_phantom_power_indication(!!mp_obj_get_int(enable));
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_front_panel_phantom_power_indication_obj, mod_iyo_hwio_set_front_panel_phantom_power_indication);
+
 STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_iyo_hwio) },
     { MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&mod_iyo_hwio_init_obj) },
@@ -243,6 +253,8 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_delete_aes67_receive_flow), MP_ROM_PTR(&mod_iyo_hwio_delete_aes67_receive_flow_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_set_front_panel_brightness), MP_ROM_PTR(&mod_iyo_hwio_set_front_panel_brightness_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_set_front_panel_phantom_power_indication), MP_ROM_PTR(&mod_iyo_hwio_set_front_panel_phantom_power_indication_obj) },
 };
 STATIC MP_DEFINE_CONST_DICT(mp_module_iyo_hwio_globals, mp_module_iyo_hwio_globals_table);
 
