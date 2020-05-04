@@ -134,11 +134,10 @@ SRC_MOD += modjni.c
 endif
 
 ASI2700_ROOT = ../../../..
-HWIO = $(realpath ${ASI2700_ROOT}/hwio)
-BII = $(ASI2700_ROOT)/audio_protocols/Dante/platform/bii
+HWIO = $(realpath ${ASI2700_ROOT}/audio_protocols/Dante/hwio)
 XMOS = $(ASI2700_ROOT)/xmos/lib_asi/api
 ASI2700_LIBS = $(ASI2700_ROOT)/libs
-CFLAGS_MOD += -I$(ASI2700_ROOT)
+CFLAGS_MOD += -I$(ASI2700_ROOT)/audio_protocols/Dante
 SRC_MOD += iyo_hwio_mod.c
 
 ifeq ($(CROSS_COMPILE),microblaze-uclinux-)
@@ -146,32 +145,32 @@ ifeq ($(CROSS_COMPILE),microblaze-uclinux-)
 CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/dante-bbe/dev/include \
 	-I$(ASI2700_ROOT)/libs/dante-bbe/dev/include/linux-2.4.x \
 	-I$(ASI2700_LIBS) \
-	-I$(ASI2700_ROOT)/audio_protocols/Dante
+	-I$(ASI2700_ROOT) \
 
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/dante-bbe/dev/lib -ldapi -ldns_sd
 
-SRC_MOD += $(BII)/hwioc.c \
-	$(BII)/queue_spi.c \
+SRC_MOD += $(HWIO)/hwioc.c \
+	$(HWIO)/queue_spi.c \
 	$(HWIO)/xmos_firmware.c \
 	$(HWIO)/adapter_info.c \
 	$(HWIO)/is31fl3733.c \
 	$(HWIO)/led_map.c \
-	$(BII)/hwio_conmon.c \
+	$(HWIO)/hwio_conmon.c \
 	$(HWIO)/xmos_firmware.c \
 	$(HWIO)/spi_transaction.c \
 	$(HWIO)/input_level_map.c \
-	$(BII)/dapi_simple_timer.c \
+	$(HWIO)/dapi_simple_timer.c \
 	$(HWIO)/meter_ballistics.c \
 	$(HWIO)/ax_lite.c \
 	$(HWIO)/logging.c \
-	$(BII)/asi_iyo_conmon_fns.c \
+	$(HWIO)/asi_iyo_conmon_fns.c \
 	$(ASI2700_LIBS)/dsp/chip/ak4458.c \
 	$(XMOS)/../src/lib_asi_spi.c \
 	$(XMOS)/../src/lib_asi_spi_i2c.c
 
 else
 
-SRC_MOD += $(BII)/dummy_hwioc.c
+SRC_MOD += $(HWIO)/dummy_hwioc.c
 
 endif
 
