@@ -24,3 +24,8 @@
  * THE SOFTWARE.
  */
 
+#ifndef MICROPY_PY_UASYNCIO
+#define MICROPY_PY_UASYNCIO                     (1)
+#endif
+
+#define MICROPY_PY_COLLECTIONS_NAMEDTUPLE__ASDICT (1)
