@@ -54,16 +54,16 @@ void mp_uos_deactivate(size_t dupterm_idx, const char *msg, mp_obj_t exc) {
 }
 
 uintptr_t mp_uos_dupterm_poll(uintptr_t poll_flags) {
-    uintptr_t poll_flags_out = 0;
+    uintptr_t volatile poll_flags_out = 0;
 
-    for (size_t idx = 0; idx < MICROPY_PY_OS_DUPTERM; ++idx) {
+    for (size_t volatile idx = 0; idx < MICROPY_PY_OS_DUPTERM; ++idx) {
         mp_obj_t s = MP_STATE_VM(dupterm_objs[idx]);
         if (s == MP_OBJ_NULL) {
             continue;
         }
 
         int errcode = 0;
-        mp_uint_t ret = 0;
+        mp_uint_t volatile ret = 0;
         const mp_stream_p_t *stream_p = mp_get_stream(s);
         #if MICROPY_PY_UOS_DUPTERM_BUILTIN_STREAM
         if (mp_uos_dupterm_is_builtin_stream(s)) {
@@ -93,7 +93,7 @@ uintptr_t mp_uos_dupterm_poll(uintptr_t poll_flags) {
 }
 
 int mp_uos_dupterm_rx_chr(void) {
-    for (size_t idx = 0; idx < MICROPY_PY_OS_DUPTERM; ++idx) {
+    for (size_t volatile idx = 0; idx < MICROPY_PY_OS_DUPTERM; ++idx) {
         if (MP_STATE_VM(dupterm_objs[idx]) == MP_OBJ_NULL) {
             continue;
         }
@@ -148,7 +148,7 @@ int mp_uos_dupterm_rx_chr(void) {
 }
 
 void mp_uos_dupterm_tx_strn(const char *str, size_t len) {
-    for (size_t idx = 0; idx < MICROPY_PY_OS_DUPTERM; ++idx) {
+    for (size_t volatile idx = 0; idx < MICROPY_PY_OS_DUPTERM; ++idx) {
         if (MP_STATE_VM(dupterm_objs[idx]) == MP_OBJ_NULL) {
             continue;
         }
