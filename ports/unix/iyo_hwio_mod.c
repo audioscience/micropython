@@ -178,6 +178,17 @@ STATIC mp_obj_t mod_iyo_hwio_send_identify_cmd(mp_obj_t enable) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_send_identify_cmd_obj, mod_iyo_hwio_send_identify_cmd);
 
+STATIC mp_obj_t mod_iyo_hwio_set_user_data_label(mp_obj_t label) {
+    int r = hwioc_set_dante_device_name(mp_obj_str_get_str(label));
+
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_user_data_label_obj, mod_iyo_hwio_set_user_data_label);
+
 STATIC mp_obj_t mod_iyo_hwio_get_fds(void) {
     int m_fd = hwioc_meter_update_fd();
     int c_fd = hwioc_conmon_to_py_fd();
@@ -241,6 +252,8 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_signal_objects_restore_done), MP_ROM_PTR(&mod_iyo_hwio_signal_objects_restore_done_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_send_identify_cmd), MP_ROM_PTR(&mod_iyo_hwio_send_identify_cmd_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_set_user_data_label), MP_ROM_PTR(&mod_iyo_hwio_set_user_data_label_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_fds), MP_ROM_PTR(&mod_iyo_hwio_get_fds_obj) },
 
