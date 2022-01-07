@@ -2,6 +2,13 @@
 #include <hwio/hwioc.h>
 #include "extmod/misc.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <linux/i2c.h>
+#include <linux/i2c-dev.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+
 
 STATIC mp_obj_t mod_iyo_hwio_init(mp_obj_t loglevel) {
     int r = hwioc_init(mp_obj_get_int(loglevel));
@@ -229,6 +236,85 @@ STATIC mp_obj_t mod_iyo_hwio_set_front_panel_phantom_power_indication(mp_obj_t e
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_front_panel_phantom_power_indication_obj, mod_iyo_hwio_set_front_panel_phantom_power_indication);
 
+static int i2c_file = 0;
+
+STATIC mp_obj_t mod_iyo_hwio_i2c_io_open(void) {
+    char *filename = "/dev/i2c-0";
+    i2c_file = open(filename, O_RDWR);
+    if (i2c_file < 0) {
+        mp_raise_OSError(i2c_file);
+    }
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_i2c_io_open_obj, mod_iyo_hwio_i2c_io_open);
+
+STATIC mp_obj_t mod_iyo_hwio_i2c_io_close(void) {
+    close(i2c_file);
+    i2c_file = 0;
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_i2c_io_close_obj, mod_iyo_hwio_i2c_io_close);
+
+STATIC mp_obj_t mod_iyo_hwio_i2c_read_reg(mp_obj_t i2c_addr_param, mp_obj_t reg_addr_param) {
+    int i2c_addr = mp_obj_get_int(i2c_addr_param);
+    int reg_addr = mp_obj_get_int(reg_addr_param);
+    uint8_t inbuf, outbuf;
+    struct i2c_rdwr_ioctl_data packets;
+    struct i2c_msg messages[2];
+    int ioctl_rslt;
+
+    outbuf = reg_addr;
+    messages[0].addr  = i2c_addr;
+    messages[0].flags = 0;
+    messages[0].len   = 1;
+    messages[0].buf   = &outbuf;
+
+    messages[1].addr  = i2c_addr;
+    messages[1].flags = I2C_M_RD;
+    messages[1].len   = 1;
+    messages[1].buf   = &inbuf;
+
+    packets.msgs      = messages;
+    packets.nmsgs     = 2;
+    
+    ioctl_rslt = ioctl(i2c_file, I2C_RDWR, &packets);
+    if (ioctl_rslt < 0) {
+        mp_raise_OSError(ioctl_rslt);
+    }
+
+    return mp_obj_new_int((mp_int_t)inbuf);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_iyo_hwio_i2c_read_reg_obj, mod_iyo_hwio_i2c_read_reg);
+
+STATIC mp_obj_t mod_iyo_hwio_i2c_write_reg(mp_obj_t i2c_addr_param, mp_obj_t reg_addr_param, mp_obj_t value_param) {
+    int i2c_addr = mp_obj_get_int(i2c_addr_param);
+    int reg_addr = mp_obj_get_int(reg_addr_param);
+    int reg_value = mp_obj_get_int(value_param);
+	struct i2c_rdwr_ioctl_data msgset;
+	struct i2c_msg msg_details[1];
+	uint8_t buf[2];
+    int ioctl_rslt;
+	
+	buf[0] = reg_addr;
+	buf[1] = reg_value;
+	msg_details[0].addr = i2c_addr;
+	msg_details[0].len = 2;
+	msg_details[0].flags = 0;
+	msg_details[0].buf = buf;
+
+	msgset.nmsgs = 1;
+	msgset.msgs = msg_details;
+
+    ioctl_rslt = ioctl(i2c_file, I2C_RDWR, (unsigned long int)&msgset);
+    if (ioctl_rslt < 0) {
+        mp_raise_OSError(ioctl_rslt);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_3(mod_iyo_hwio_i2c_write_reg_obj, mod_iyo_hwio_i2c_write_reg);
+
+
 STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_iyo_hwio) },
     { MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&mod_iyo_hwio_init_obj) },
@@ -268,6 +354,15 @@ STATIC const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_set_front_panel_brightness), MP_ROM_PTR(&mod_iyo_hwio_set_front_panel_brightness_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_set_front_panel_phantom_power_indication), MP_ROM_PTR(&mod_iyo_hwio_set_front_panel_phantom_power_indication_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_i2c_io_open), MP_ROM_PTR(&mod_iyo_hwio_i2c_io_open_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_i2c_io_close), MP_ROM_PTR(&mod_iyo_hwio_i2c_io_close_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_i2c_read_reg), MP_ROM_PTR(&mod_iyo_hwio_i2c_read_reg_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_i2c_write_reg), MP_ROM_PTR(&mod_iyo_hwio_i2c_write_reg_obj) },
+
 };
 STATIC MP_DEFINE_CONST_DICT(mp_module_iyo_hwio_globals, mp_module_iyo_hwio_globals_table);
 
