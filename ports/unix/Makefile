@@ -151,6 +151,8 @@ LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/dante-bbe/dev/lib -ldapi -ldns_sd
 
 SRC_MOD += $(HWIO)/hwioc.c \
 	$(HWIO)/queue_spi.c \
+        $(HWIO)/ublaze_spi.c \
+        $(HWIO)/ublaze_gpio.c \
 	$(HWIO)/xmos_firmware.c \
 	$(HWIO)/adapter_info.c \
 	$(HWIO)/is31fl3733.c \
@@ -170,7 +172,41 @@ SRC_MOD += $(HWIO)/hwioc.c \
 
 else
 
+ifeq ($(CROSS_COMPILE),arm-linux-)
+
+CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/include \
+        -I$(ASI2700_ROOT)/libs/libs/aud-bk3-host-tools/dev/include/linux-4.19.x \
+        -I$(ASI2700_LIBS) \
+        -I$(ASI2700_ROOT) \
+
+LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/lib -ledapi -ldns_sd
+
+SRC_MOD += $(HWIO)/hwioc.c \
+        $(HWIO)/queue_spi.c \
+        $(HWIO)/bk3_spi.c \
+        $(HWIO)/bk3_gpio.c \
+        $(HWIO)/xmos_firmware.c \
+        $(HWIO)/adapter_info.c \
+        $(HWIO)/is31fl3733.c \
+        $(HWIO)/led_map.c \
+        $(HWIO)/hwio_conmon.c \
+        $(HWIO)/xmos_firmware.c \
+        $(HWIO)/spi_transaction.c \
+        $(HWIO)/input_level_map.c \
+        $(HWIO)/dapi_simple_timer.c \
+        $(HWIO)/meter_ballistics.c \
+        $(HWIO)/ax_lite.c \
+        $(HWIO)/logging.c \
+        $(HWIO)/asi_iyo_conmon_fns.c \
+        $(ASI2700_LIBS)/dsp/chip/ak4458.c \
+        $(XMOS)/../src/lib_asi_spi.c \
+        $(XMOS)/../src/lib_asi_spi_i2c.c
+
+else
+
 SRC_MOD += $(HWIO)/dummy_hwioc.c
+
+endif
 
 endif
 
