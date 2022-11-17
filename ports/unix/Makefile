@@ -146,6 +146,7 @@ CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/dante-bbe/dev/include \
 	-I$(ASI2700_ROOT)/libs/dante-bbe/dev/include/linux-2.4.x \
 	-I$(ASI2700_LIBS) \
 	-I$(ASI2700_ROOT) \
+	-DAUD_USER_PART_MOUNTPOINT=\"/usr\"
 
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/dante-bbe/dev/lib -ldapi -ldns_sd
 
@@ -178,6 +179,7 @@ CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/include \
         -I$(ASI2700_ROOT)/libs/libs/aud-bk3-host-tools/dev/include/linux-4.19.x \
         -I$(ASI2700_LIBS) \
         -I$(ASI2700_ROOT) \
+	-DAUD_USER_PART_MOUNTPOINT=\"/usr/local\"
 
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/lib -ledapi -ldns_sd
 
