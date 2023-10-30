@@ -151,11 +151,12 @@ CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/dante-bbe/dev/include \
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/dante-bbe/dev/lib -ldapi -ldns_sd
 
 SRC_MOD += $(HWIO)/hwioc.c \
+	$(HWIO)/hwioc_xmos.c \
 	$(HWIO)/queue_spi.c \
         $(HWIO)/ublaze_spi.c \
         $(HWIO)/ublaze_gpio.c \
 	$(HWIO)/xmos_firmware.c \
-	$(HWIO)/adapter_info.c \
+	$(HWIO)/adapter_info_xmos.c \
 	$(HWIO)/is31fl3733.c \
 	$(HWIO)/led_map.c \
 	$(HWIO)/hwio_conmon.c \
@@ -184,11 +185,14 @@ CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/include \
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/lib -ledapi -ldns_sd
 
 SRC_MOD += $(HWIO)/hwioc.c \
+        $(HWIO)/hwioc_xmos.c \
+        $(HWIO)/i2cbusses.c \
+        $(HWIO)/smbus.c \
         $(HWIO)/queue_spi.c \
         $(HWIO)/bk3_spi.c \
         $(HWIO)/bk3_gpio.c \
         $(HWIO)/xmos_firmware.c \
-        $(HWIO)/adapter_info.c \
+        $(HWIO)/adapter_info_xmos.c \
         $(HWIO)/is31fl3733.c \
         $(HWIO)/led_map.c \
         $(HWIO)/hwio_conmon.c \
