@@ -210,6 +210,7 @@ SRC_MOD += $(HWIO)/hwioc.c \
 
 else
 
+CFLAGS_MOD += -I$(ASI2700_LIBS) -I$(ASI2700_ROOT)
 SRC_MOD += $(HWIO)/dummy_hwioc.c
 
 endif
