@@ -179,6 +179,7 @@ ifeq ($(CROSS_COMPILE),arm-linux-)
 CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/include \
         -I$(ASI2700_ROOT)/libs/libs/aud-bk3-host-tools/dev/include/linux-4.19.x \
         -I$(ASI2700_LIBS) \
+        -I$(ASI2700_LIBS)/dsp/chip \
         -I$(ASI2700_ROOT) \
 	-DAUD_USER_PART_MOUNTPOINT=\"/usr/local\"
 
@@ -205,6 +206,7 @@ SRC_MOD += $(HWIO)/hwioc.c \
         $(HWIO)/logging.c \
         $(HWIO)/asi_iyo_conmon_fns.c \
         $(ASI2700_LIBS)/dsp/chip/ak4458.c \
+        $(ASI2700_LIBS)/dsp/chip/cap1188.c \
         $(XMOS)/../src/lib_asi_spi.c \
         $(XMOS)/../src/lib_asi_spi_i2c.c
 
