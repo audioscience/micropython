@@ -192,6 +192,7 @@ SRC_MOD += $(HWIO)/hwioc.c \
         $(HWIO)/queue_spi.c \
         $(HWIO)/bk3_spi.c \
         $(HWIO)/bk3_gpio.c \
+        $(HWIO)/bk3_that6266.c \
         $(HWIO)/xmos_firmware.c \
         $(HWIO)/adapter_info_xmos.c \
         $(HWIO)/is31fl3733.c \
@@ -207,6 +208,7 @@ SRC_MOD += $(HWIO)/hwioc.c \
         $(HWIO)/asi_iyo_conmon_fns.c \
         $(ASI2700_LIBS)/dsp/chip/ak4458.c \
         $(ASI2700_LIBS)/dsp/chip/cap1188.c \
+        $(ASI2700_LIBS)/dsp/chip/that6266.c \
         $(XMOS)/../src/lib_asi_spi.c \
         $(XMOS)/../src/lib_asi_spi_i2c.c
 
