@@ -187,6 +187,7 @@ LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/lib -ledapi -ldns_s
 
 SRC_MOD += $(HWIO)/hwioc.c \
         $(HWIO)/hwioc_xmos.c \
+        $(HWIO)/hwioc_asi3201.c \
         $(HWIO)/i2cbusses.c \
         $(HWIO)/smbus.c \
         $(HWIO)/queue_spi.c \
