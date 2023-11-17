@@ -214,6 +214,7 @@ SRC_MOD += $(HWIO)/hwioc.c \
         $(ASI2700_LIBS)/dsp/chip/tas5806m.c \
         $(ASI2700_LIBS)/dsp/2300/lib2300/lib2300_cs42448.c \
         $(ASI2700_LIBS)/dsp/chip/that6266.c \
+        $(ASI2700_LIBS)/dsp/chip/tpa6130a2.c \
         $(XMOS)/../src/lib_asi_spi.c \
         $(XMOS)/../src/lib_asi_spi_i2c.c
 
