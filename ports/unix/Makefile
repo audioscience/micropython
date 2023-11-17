@@ -195,6 +195,7 @@ SRC_MOD += $(HWIO)/hwioc.c \
         $(HWIO)/bk3_spi.c \
         $(HWIO)/bk3_gpio.c \
         $(HWIO)/bk3_that6266.c \
+        $(HWIO)/pca9534.c \
         $(HWIO)/xmos_firmware.c \
         $(HWIO)/adapter_info_xmos.c \
         $(HWIO)/is31fl3733.c \
