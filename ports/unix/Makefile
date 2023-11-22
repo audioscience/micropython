@@ -209,6 +209,9 @@ SRC_MOD += $(HWIO)/hwioc.c \
         $(HWIO)/ax_lite.c \
         $(HWIO)/logging.c \
         $(HWIO)/asi_iyo_conmon_fns.c \
+        $(HWIO)/nvmem/pseudo_mtd.c \
+        $(ASI2700_LIBS)/apps/asi1230/lib/nvmem/crc32.c \
+        $(ASI2700_LIBS)/apps/asi1230/lib/nvmem/nvmem.c \
         $(ASI2700_LIBS)/dsp/chip/ak4458.c \
         $(ASI2700_LIBS)/dsp/chip/cap1188.c \
         $(ASI2700_LIBS)/dsp/chip/tas5806m.c \
