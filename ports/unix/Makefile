@@ -146,12 +146,14 @@ CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/dante-bbe/dev/include \
 	-I$(ASI2700_ROOT)/libs/dante-bbe/dev/include/linux-2.4.x \
 	-I$(ASI2700_LIBS) \
 	-I$(ASI2700_ROOT) \
-	-DAUD_USER_PART_MOUNTPOINT=\"/usr\"
+	-DAUD_USER_PART_MOUNTPOINT=\"/usr\" \
+	-DMICROBLAZE_TARGET
 
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/dante-bbe/dev/lib -ldapi -ldns_sd
 
 SRC_MOD += $(HWIO)/hwioc.c \
 	$(HWIO)/hwioc_xmos.c \
+        $(HWIO)/device_status.c \
 	$(HWIO)/queue_spi.c \
         $(HWIO)/ublaze_spi.c \
         $(HWIO)/ublaze_gpio.c \
@@ -181,7 +183,8 @@ CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/include \
         -I$(ASI2700_LIBS) \
         -I$(ASI2700_LIBS)/dsp/chip \
         -I$(ASI2700_ROOT) \
-	-DAUD_USER_PART_MOUNTPOINT=\"/usr/local\"
+	-DAUD_USER_PART_MOUNTPOINT=\"/usr/local\" \
+	-DARM_TARGET
 
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/lib -ledapi -ldns_sd
 
