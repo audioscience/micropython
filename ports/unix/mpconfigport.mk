@@ -37,4 +37,4 @@ MICROPY_PY_JNI = 0
 
 # Avoid using system libraries, use copies bundled with MicroPython
 # as submodules (currently affects only libffi).
-MICROPY_STANDALONE = 0
+MICROPY_STANDALONE = 1
