@@ -218,6 +218,17 @@ CFLAGS_MOD += -I/usr/lib/jvm/java-7-openjdk-amd64/include -DMICROPY_PY_JNI=1
 SRC_MOD += modjni.c
 endif
 
+# Path for ASI module
+ASI2900_ROOT = ../../../..
+HWIO = $(realpath ${ASI2900_ROOT}/audio_protocols/dante/hwio)
+ASI2900_LIBS = $(ASI2900_ROOT)/subrepos
+CFLAGS_MOD += -I$(ASI2900_ROOT)/audio_protocols/dante
+SRC_MOD += asi_hwio_mod.c
+
+# Path to dummy implementation
+CFLAGS_MOD += -I$(ASI2900_LIBS) -I$(ASI2900_ROOT)
+SRC_MOD += $(HWIO)/dummy_hwioc.c
+
 # source files
 SRC_C += \
 	main.c \
