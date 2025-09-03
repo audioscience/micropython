@@ -218,6 +218,7 @@ CFLAGS_MOD += -I/usr/lib/jvm/java-7-openjdk-amd64/include -DMICROPY_PY_JNI=1
 SRC_MOD += modjni.c
 endif
 
+ifeq ($(ASI_TARGET),ASI2900)
 # Add ASI module
 ASI2900_ROOT = ../../../..
 HWIO = $(realpath ${ASI2900_ROOT}/audio_protocols/dante/hwio)
@@ -236,6 +237,7 @@ SRC_MOD += $(HWIO)/hwioc_asi2900.c \
 		$(HWIO)/asi_iyo_conmon_fns.c
 
 LDFLAGS_MOD += -L$(EDAPI_ROOT)/lib -ledapi -ldns_sd -lstdc++
+endif
 
 # source files
 SRC_C += \
