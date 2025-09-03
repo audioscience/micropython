@@ -242,6 +242,11 @@ extern const struct _mp_obj_module_t mp_module_iyo_hwio;
 #else
 #define MICROPY_PY_USELECT_DEF
 #endif
+#if MICROPY_PY_ASI_HWIO
+#define MICROPY_PY_ASI_HWIO_DEF { MP_ROM_QSTR(MP_QSTR_iyo_hwio), MP_ROM_PTR(&mp_module_iyo_hwio) },
+#else
+#define MICROPY_PY_ASI_HWIO_DEF
+#endif
 
 #define MICROPY_PORT_BUILTIN_MODULES \
     MICROPY_PY_FFI_DEF \
@@ -252,7 +257,7 @@ extern const struct _mp_obj_module_t mp_module_iyo_hwio;
     MICROPY_PY_UOS_DEF \
     MICROPY_PY_USELECT_DEF \
     MICROPY_PY_TERMIOS_DEF \
-    { MP_ROM_QSTR(MP_QSTR_iyo_hwio), MP_ROM_PTR(&mp_module_iyo_hwio) }, \
+    MICROPY_PY_ASI_HWIO_DEF \
 
 // type definitions for the specific machine
 
