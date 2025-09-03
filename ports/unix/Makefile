@@ -223,7 +223,7 @@ ifeq ($(ASI_TARGET),ASI2900)
 ASI2900_ROOT = ../../../..
 HWIO = $(realpath ${ASI2900_ROOT}/audio_protocols/dante/hwio)
 ASI2900_LIBS = $(ASI2900_ROOT)/subrepos
-CFLAGS_MOD += -I$(ASI2900_ROOT)/audio_protocols/dante
+CFLAGS_MOD += -I$(ASI2900_ROOT)/audio_protocols/dante -DMICROPY_PY_ASI_HWIO=1
 SRC_MOD += asi_hwio_mod.c
 
 # Add hwio implementation
