@@ -224,6 +224,19 @@ HWIO = $(realpath ${ASI2900_ROOT}/audio_protocols/dante/hwio)
 ASI2900_LIBS = $(ASI2900_ROOT)/subrepos
 CFLAGS_MOD += -I$(ASI2900_ROOT)/audio_protocols/dante
 SRC_MOD += asi_hwio_mod.c
+
+# Add hwio implementation
+EDAPI_ROOT = $(ASI2900_LIBS)/audinate-embedded-dapi_aarch64-gnueabihf_linux
+CFLAGS_MOD += -I$(ASI2900_LIBS) -I$(ASI2900_ROOT) -I$(EDAPI_ROOT)/include -DASI2900
+CFLAGS_MOD += -Wno-ignored-qualifiers
+SRC_MOD += $(HWIO)/hwioc_asi2900.c \
+		$(HWIO)/hwio_conmon.c \
+		$(HWIO)/meter_ballistics.c \
+		$(HWIO)/dapi_simple_timer.c \
+		$(HWIO)/asi_iyo_conmon_fns.c
+
+LDFLAGS_MOD += -L$(EDAPI_ROOT)/lib -ledapi -ldns_sd -lstdc++
+
 # source files
 SRC_C += \
 	main.c \
