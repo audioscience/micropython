@@ -239,7 +239,8 @@ SRC_MOD += asi_hwio_mod.c
 EDAPI_ROOT = $(ASI2900_LIBS)/audinate-embedded-dapi_aarch64-gnueabihf_linux
 CFLAGS_MOD += -I$(ASI2900_LIBS) -I$(ASI2900_ROOT) -I$(EDAPI_ROOT)/include -DASI2900
 CFLAGS_MOD += -Wno-ignored-qualifiers
-SRC_MOD += $(HWIO)/hwioc_asi2900.c \
+SRC_MOD += $(HWIO)/hwioc_auddep.c \
+		$(HWIO)/hwioc_conmon.c \
 		$(HWIO)/hwio_conmon.c \
 		$(HWIO)/meter_ballistics.c \
 		$(HWIO)/dapi_simple_timer.c \
