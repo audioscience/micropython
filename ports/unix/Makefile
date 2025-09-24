@@ -151,7 +151,8 @@ CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/dante-bbe/dev/include \
 
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/dante-bbe/dev/lib -ldapi -ldns_sd
 
-SRC_MOD += $(HWIO)/hwioc.c \
+SRC_MOD += $(HWIO)/hwioc_audbkn.c \
+	$(HWIO)/hwioc_conmon.c \
 	$(HWIO)/hwioc_xmos.c \
         $(HWIO)/device_status.c \
 	$(HWIO)/queue_spi.c \
@@ -188,7 +189,8 @@ CFLAGS_MOD += -I$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/include \
 
 LDFLAGS_MOD += -L$(ASI2700_ROOT)/libs/aud-bk3-host-tools/dev/lib -ledapi -ldns_sd -lstdc++
 
-SRC_MOD += $(HWIO)/hwioc.c \
+SRC_MOD += $(HWIO)/hwioc_audbkn.c \
+        $(HWIO)/hwioc_conmon.c \
         $(HWIO)/hwioc_xmos.c \
         $(HWIO)/hwioc_asi3201.c \
         $(HWIO)/device_status.c \
