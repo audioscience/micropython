@@ -137,6 +137,19 @@ STATIC mp_obj_t mod_os_getenv(mp_obj_t var_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mod_os_getenv_obj, mod_os_getenv);
 
+STATIC mp_obj_t mod_os_realpath(mp_obj_t var_in) {
+    char s[PATH_MAX];
+    const char *ret = realpath(mp_obj_str_get_str(var_in), s);
+    if (ret == NULL) {
+        if (errno) {
+            mp_raise_OSError(errno);
+        }
+        return mp_const_none;
+    }
+    return mp_obj_new_str(ret, strlen(ret));
+}
+MP_DEFINE_CONST_FUN_OBJ_1(mod_os_realpath_obj, mod_os_realpath);
+
 STATIC mp_obj_t mod_os_mkdir(mp_obj_t path_in) {
     // TODO: Accept mode param
     const char *path = mp_obj_str_get_str(path_in);
@@ -246,6 +259,7 @@ STATIC const mp_rom_map_elem_t mp_module_os_globals_table[] = {
     #if MICROPY_PY_OS_RENAME
     { MP_ROM_QSTR(MP_QSTR_rename), MP_ROM_PTR(&mod_os_rename_obj) },
     #endif
+    { MP_ROM_QSTR(MP_QSTR_realpath), MP_ROM_PTR(&mod_os_realpath_obj) },
     #if MICROPY_PY_OS_DUPTERM
     { MP_ROM_QSTR(MP_QSTR_dupterm), MP_ROM_PTR(&mp_uos_dupterm_obj) },
     #endif
