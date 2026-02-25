@@ -32,6 +32,19 @@
 #include "py/runtime.h"
 #include "py/mphal.h"
 
+static mp_obj_t mp_os_realpath(mp_obj_t var_in) {
+    char s[PATH_MAX];
+    const char *ret = realpath(mp_obj_str_get_str(var_in), s);
+    if (ret == NULL) {
+        if (errno) {
+            mp_raise_OSError(errno);
+        }
+        return mp_const_none;
+    }
+    return mp_obj_new_str(ret, strlen(ret));
+}
+MP_DEFINE_CONST_FUN_OBJ_1(mp_os_realpath_obj, mp_os_realpath);
+
 static mp_obj_t mp_os_getenv(size_t n_args, const mp_obj_t *args) {
     const char *s = getenv(mp_obj_str_get_str(args[0]));
     if (s == NULL) {
