@@ -1,0 +1,5 @@
+# ASI2800 variant.
+
+FROZEN_MANIFEST ?= $(VARIANT_DIR)/manifest.py
+
+MICROPY_STANDALONE = 1
