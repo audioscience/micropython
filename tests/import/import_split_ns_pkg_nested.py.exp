@@ -1,0 +1,3 @@
+mod_x from dir1/sub
+mod_y from dir2/sub
+nested split namespace package OK

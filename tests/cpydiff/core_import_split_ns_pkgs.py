@@ -1,8 +1,8 @@
 """
 categories: Core,import
-description: MicroPython doesn't support namespace packages split across filesystem.
+description: MicroPython doesn't support namespace packages split across filesystem by default.
 cause: MicroPython's import system is highly optimized for simplicity, minimal memory usage, and minimal filesystem search overhead.
-workaround: Don't install modules belonging to the same namespace package in different directories. For MicroPython, it's recommended to have at most 3-component module search paths: for your current application, per-user (writable), system-wide (non-writable).
+workaround: Enable MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES in the build configuration, or don't install modules belonging to the same namespace package in different directories.
 """
 
 import sys

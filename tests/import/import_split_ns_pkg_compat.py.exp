@@ -1,0 +1,3 @@
+regular package: 42
+foo
+single-dir ns package OK

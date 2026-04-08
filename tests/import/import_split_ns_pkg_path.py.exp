@@ -1,0 +1,3 @@
+type: list
+len: 2
+dirs: ['split_ns_dir1', 'split_ns_dir2']
