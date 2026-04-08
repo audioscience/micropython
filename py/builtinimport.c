@@ -151,6 +151,75 @@ static mp_import_stat_t stat_top_level(qstr mod_name, vstr_t *dest) {
     #endif
 }
 
+#if MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES && MICROPY_PY_SYS && MICROPY_PY_SYS_PATH
+// Collect all sys.path entries where mod_name exists as a directory (namespace
+// package portion).  Returns a list of path strings.
+static mp_obj_t collect_namespace_paths(qstr mod_name) {
+    mp_obj_t path_list = mp_obj_new_list(0, NULL);
+    size_t path_num;
+    mp_obj_t *path_items;
+    mp_obj_get_array(mp_sys_path, &path_num, &path_items);
+    VSTR_FIXED(probe, MICROPY_ALLOC_PATH_MAX);
+
+    for (size_t i = 0; i < path_num; i++) {
+        vstr_reset(&probe);
+        size_t p_len;
+        const char *p = mp_obj_str_get_data(path_items[i], &p_len);
+        if (p_len > 0) {
+            vstr_add_strn(&probe, p, p_len);
+            vstr_add_char(&probe, PATH_SEP_CHAR[0]);
+        }
+        vstr_add_str(&probe, qstr_str(mod_name));
+        if (stat_path(&probe) == MP_IMPORT_STAT_DIR) {
+            mp_obj_list_append(path_list, mp_obj_new_str(vstr_str(&probe), vstr_len(&probe)));
+        }
+    }
+
+    return path_list;
+}
+
+// Search for a sub-module across multiple __path__ entries (list of strings).
+// On success, dest is set to the matching path and the stat result is returned.
+static mp_import_stat_t stat_in_path_list(mp_obj_t path_list, qstr mod_name, vstr_t *dest) {
+    size_t len;
+    mp_obj_t *items;
+    mp_obj_get_array(path_list, &len, &items);
+    for (size_t i = 0; i < len; i++) {
+        vstr_reset(dest);
+        vstr_add_str(dest, mp_obj_str_get_str(items[i]));
+        vstr_add_char(dest, PATH_SEP_CHAR[0]);
+        vstr_add_str(dest, qstr_str(mod_name));
+        mp_import_stat_t stat = stat_module(dest);
+        if (stat != MP_IMPORT_STAT_NO_EXIST) {
+            return stat;
+        }
+    }
+    return MP_IMPORT_STAT_NO_EXIST;
+}
+
+// Collect all directories named mod_name under each entry in parent_path_list.
+// Used when a sub-package is also a namespace package.
+static mp_obj_t collect_namespace_subpaths(mp_obj_t parent_path_list, qstr mod_name) {
+    mp_obj_t result = mp_obj_new_list(0, NULL);
+    size_t len;
+    mp_obj_t *items;
+    mp_obj_get_array(parent_path_list, &len, &items);
+    VSTR_FIXED(probe, MICROPY_ALLOC_PATH_MAX);
+
+    for (size_t i = 0; i < len; i++) {
+        vstr_reset(&probe);
+        vstr_add_str(&probe, mp_obj_str_get_str(items[i]));
+        vstr_add_char(&probe, PATH_SEP_CHAR[0]);
+        vstr_add_str(&probe, qstr_str(mod_name));
+        if (stat_path(&probe) == MP_IMPORT_STAT_DIR) {
+            mp_obj_list_append(result, mp_obj_new_str(vstr_str(&probe), vstr_len(&probe)));
+        }
+    }
+
+    return result;
+}
+#endif // MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES
+
 #if MICROPY_MODULE_FROZEN_STR || MICROPY_ENABLE_COMPILER
 static void do_load_from_lexer(mp_module_context_t *context, mp_lexer_t *lex) {
     #if MICROPY_MODULE___FILE__
@@ -386,6 +455,9 @@ static mp_obj_t process_import_at_level(qstr full_mod_name, qstr level_mod_name,
     VSTR_FIXED(path, MICROPY_ALLOC_PATH_MAX);
     mp_import_stat_t stat = MP_IMPORT_STAT_NO_EXIST;
     mp_obj_t module_obj;
+    #if MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES && MICROPY_PY_SYS && MICROPY_PY_SYS_PATH
+    mp_obj_t outer_path_list = MP_OBJ_NULL;
+    #endif
 
     if (outer_module_obj == MP_OBJ_NULL) {
         // First module in the dotted-name path.
@@ -435,14 +507,22 @@ static mp_obj_t process_import_at_level(qstr full_mod_name, qstr level_mod_name,
         mp_obj_t dest[2];
         mp_load_method_maybe(outer_module_obj, MP_QSTR___path__, dest);
         if (dest[0] != MP_OBJ_NULL) {
-            // e.g. __path__ will be "<matched search path>/foo/bar"
-            vstr_add_str(&path, mp_obj_str_get_str(dest[0]));
+            #if MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES && MICROPY_PY_SYS && MICROPY_PY_SYS_PATH
+            if (mp_obj_is_type(dest[0], &mp_type_list)) {
+                outer_path_list = dest[0];
+                stat = stat_in_path_list(dest[0], level_mod_name, &path);
+            } else
+            #endif
+            {
+                // e.g. __path__ will be "<matched search path>/foo/bar"
+                vstr_add_str(&path, mp_obj_str_get_str(dest[0]));
 
-            // Add the level module name to the path to get "<matched search path>/foo/bar/baz".
-            vstr_add_char(&path, PATH_SEP_CHAR[0]);
-            vstr_add_str(&path, qstr_str(level_mod_name));
+                // Add the level module name to the path to get "<matched search path>/foo/bar/baz".
+                vstr_add_char(&path, PATH_SEP_CHAR[0]);
+                vstr_add_str(&path, qstr_str(level_mod_name));
 
-            stat = stat_module(&path);
+                stat = stat_module(&path);
+            }
         }
     }
 
@@ -497,16 +577,35 @@ static mp_obj_t process_import_at_level(qstr full_mod_name, qstr level_mod_name,
         // https://docs.python.org/3/reference/import.html
         // "Specifically, any module that contains a __path__ attribute is considered a package."
         // This gets used later to locate any subpackages of this module.
-        mp_store_attr(module_obj, MP_QSTR___path__, mp_obj_new_str(vstr_str(&path), vstr_len(&path)));
         size_t orig_path_len = path.len;
         vstr_add_str(&path, PATH_SEP_CHAR "__init__.py");
 
         // execute "path/__init__.py" (if available).
         if (stat_file_py_or_mpy(&path) == MP_IMPORT_STAT_FILE) {
+            // Regular package with __init__.py -- single-string __path__.
+            path.len = orig_path_len;
+            mp_store_attr(module_obj, MP_QSTR___path__, mp_obj_new_str(vstr_str(&path), vstr_len(&path)));
+            vstr_add_str(&path, PATH_SEP_CHAR "__init__.py");
             do_load(MP_OBJ_TO_PTR(module_obj), &path);
         } else {
-            // No-op. Nothing to load.
-            // mp_warning("%s is imported as namespace package", vstr_str(&path));
+            #if MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES && MICROPY_PY_SYS && MICROPY_PY_SYS_PATH
+            // Namespace package (no __init__.py) -- collect all matching
+            // directories and store __path__ as a list.
+            path.len = orig_path_len;
+            mp_obj_t ns_paths;
+            if (outer_path_list != MP_OBJ_NULL) {
+                // Sub-package: collect from parent's __path__ list.
+                ns_paths = collect_namespace_subpaths(outer_path_list, level_mod_name);
+            } else {
+                // Top-level: collect from sys.path.
+                ns_paths = collect_namespace_paths(level_mod_name);
+            }
+            mp_store_attr(module_obj, MP_QSTR___path__, ns_paths);
+            #else
+            // Namespace package without split support -- single-string __path__.
+            path.len = orig_path_len;
+            mp_store_attr(module_obj, MP_QSTR___path__, mp_obj_new_str(vstr_str(&path), vstr_len(&path)));
+            #endif
         }
         // Remove /__init__.py suffix from path.
         path.len = orig_path_len;

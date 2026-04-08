@@ -1145,6 +1145,14 @@ typedef time_t mp_timestamp_t;
 #define MICROPY_MODULE_GETATTR (MICROPY_CONFIG_ROM_LEVEL_AT_LEAST_CORE_FEATURES)
 #endif
 
+// Whether to support split namespace packages across multiple sys.path entries.
+// When enabled, a namespace package (directory without __init__.py) will have
+// its __path__ built from all matching directories across sys.path, allowing
+// sub-modules to be found in any of those directories (PEP 420).
+#ifndef MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES
+#define MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES (0)
+#endif
+
 // Whether to enable importing foo.py with __name__ set to '__main__'
 // Used by the unix port for the -m flag.
 #ifndef MICROPY_MODULE_OVERRIDE_MAIN_IMPORT
