@@ -31,3 +31,4 @@
 #include "../mpconfigvariant_common.h"
 
 #define MICROPY_PY_OS_DUPTERM          (3)
+#define MICROPY_MODULE_SPLIT_NAMESPACE_PACKAGES (1)
