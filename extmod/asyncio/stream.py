@@ -189,8 +189,12 @@ async def start_server(cb, host, port, backlog=5, ssl=None):
     s = socket.socket(addr_info[0])  # Use address family from getaddrinfo
     s.setblocking(False)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind(addr_info[-1])
-    s.listen(backlog)
+    try:
+        s.bind(addr_info[-1])
+        s.listen(backlog)
+    except Exception:
+        s.close()
+        raise
 
     # Create and return server object and task.
     srv = Server()
