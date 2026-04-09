@@ -1,0 +1,2 @@
+connect_error: close_called=5
+ssl_wrap_failure: leak=0

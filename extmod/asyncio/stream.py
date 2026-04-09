@@ -107,6 +107,7 @@ def open_connection(host, port, ssl=None, server_hostname=None):
         s.connect(ai[-1])
     except OSError as er:
         if er.errno != EINPROGRESS:
+            s.close()
             raise er
     # wrap with SSL, if requested
     if ssl:
@@ -116,7 +117,11 @@ def open_connection(host, port, ssl=None, server_hostname=None):
             ssl = _ssl.SSLContext(_ssl.PROTOCOL_TLS_CLIENT)
         if not server_hostname:
             server_hostname = host
-        s = ssl.wrap_socket(s, server_hostname=server_hostname, do_handshake_on_connect=False)
+        try:
+            s = ssl.wrap_socket(s, server_hostname=server_hostname, do_handshake_on_connect=False)
+        except Exception:
+            s.close()
+            raise
         s.setblocking(False)
     ss = Stream(s)
     yield core._io_queue.queue_write(s)
