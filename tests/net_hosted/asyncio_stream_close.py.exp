@@ -1,0 +1,5 @@
+close: fd=-1
+close+wait_closed: fd=-1
+aclose: fd=-1
+double_close: fd=-1
+close_only_leak: 0

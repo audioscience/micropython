@@ -14,11 +14,13 @@ class Stream:
         return self.e[v]
 
     def close(self):
-        pass
+        self.s.close()
 
     async def wait_closed(self):
-        # TODO yield?
-        self.s.close()
+        pass
+
+    async def aclose(self):
+        self.close()
 
     # async
     def read(self, n=-1):
@@ -226,6 +228,5 @@ async def stream_awrite(self, buf, off=0, sz=-1):
     await self.drain()
 
 
-Stream.aclose = Stream.wait_closed
 Stream.awrite = stream_awrite
 Stream.awritestr = stream_awrite  # TODO explicitly convert to bytes?
