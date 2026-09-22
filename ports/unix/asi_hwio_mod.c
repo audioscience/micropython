@@ -127,7 +127,7 @@ static MP_DEFINE_CONST_FUN_OBJ_3(mod_iyo_hwio_add_aes67_receive_flow_obj, mod_iy
 // exactly the channels in `slot_masks` (a list of up to 8 ints, bit n = rx
 // channel n feeds from that slot); all zero deletes the flow.
 static mp_obj_t mod_iyo_hwio_set_aes67_receive_flow(mp_obj_t rx_sub_ip, mp_obj_t slot_masks) {
-    uint32_t masks[CONMON_CMD_MAX_SLOTS] = {0};
+    uint64_t masks[CONMON_CMD_MAX_SLOTS] = {0};
     size_t n = 0;
     mp_obj_t *items = NULL;
     mp_obj_get_array(slot_masks, &n, &items);
@@ -135,7 +135,7 @@ static mp_obj_t mod_iyo_hwio_set_aes67_receive_flow(mp_obj_t rx_sub_ip, mp_obj_t
         mp_raise_ValueError(MP_ERROR_TEXT("too many slots"));
     }
     for (size_t i = 0; i < n; i++) {
-        masks[i] = (uint32_t) mp_obj_get_int_truncated(items[i]);
+        masks[i] = (uint64_t) mp_obj_get_int_truncated(items[i]);
     }
     int r = hwioc_set_aes67_receive_flow(mp_obj_str_get_str(rx_sub_ip), masks);
 
