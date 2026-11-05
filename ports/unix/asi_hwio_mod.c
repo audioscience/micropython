@@ -3,6 +3,18 @@
 #include "extmod/misc.h"
 
 
+static mp_obj_t mod_iyo_hwio_get_dante_flow_counts(void) {
+    int rx = -1;
+    int tx = -1;
+    hwioc_get_dante_flow_counts(&rx, &tx);
+    mp_obj_t items[2];
+    items[0] = mp_obj_new_int(rx);
+    items[1] = mp_obj_new_int(tx);
+    return mp_obj_new_tuple(2, items);
+}
+static MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_get_dante_flow_counts_obj, mod_iyo_hwio_get_dante_flow_counts);
+
+
 static mp_obj_t mod_iyo_hwio_init(mp_obj_t loglevel) {
     int r = hwioc_init(mp_obj_get_int(loglevel));
 
@@ -319,6 +331,8 @@ static const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_set_rxchannel_name), MP_ROM_PTR(&mod_iyo_hwio_set_rxchannel_name_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_get_fds), MP_ROM_PTR(&mod_iyo_hwio_get_fds_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_get_dante_flow_counts), MP_ROM_PTR(&mod_iyo_hwio_get_dante_flow_counts_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_add_aes67_transmit_flow), MP_ROM_PTR(&mod_iyo_hwio_add_aes67_transmit_flow_obj) },
 
