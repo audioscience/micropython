@@ -203,6 +203,30 @@ static mp_obj_t mod_iyo_hwio_send_reboot_cmd(void) {
 }
 static MP_DEFINE_CONST_FUN_OBJ_0(mod_iyo_hwio_send_reboot_cmd_obj, mod_iyo_hwio_send_reboot_cmd);
 
+// AES67 mode on/off; the device answers with an AES67 status update.
+static mp_obj_t mod_iyo_hwio_set_aes67_enabled(mp_obj_t enabled) {
+    int r = hwioc_set_aes67_enabled(mp_obj_is_true(enabled));
+
+    if (r < 0) {
+        mp_raise_OSError(-r);
+    }
+
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_aes67_enabled_obj, mod_iyo_hwio_set_aes67_enabled);
+
+// AES67 multicast prefix as a dotted address, e.g. "239.192.0.0".
+static mp_obj_t mod_iyo_hwio_set_aes67_mcast_prefix(mp_obj_t prefix) {
+    int r = hwioc_set_aes67_mcast_prefix(mp_obj_str_get_str(prefix));
+
+    if (r < 0) {
+        mp_raise_ValueError(MP_ERROR_TEXT("not an IPv4 prefix"));
+    }
+
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(mod_iyo_hwio_set_aes67_mcast_prefix_obj, mod_iyo_hwio_set_aes67_mcast_prefix);
+
 static mp_obj_t mod_iyo_hwio_signal_objects_restore_done(void) {
     int r = hwioc_signal_objects_restore_done();
 
@@ -319,6 +343,9 @@ static const mp_rom_map_elem_t mp_module_iyo_hwio_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_notify_switch_found), MP_ROM_PTR(&mod_iyo_hwio_notify_switch_found_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_send_reboot_cmd), MP_ROM_PTR(&mod_iyo_hwio_send_reboot_cmd_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_set_aes67_enabled), MP_ROM_PTR(&mod_iyo_hwio_set_aes67_enabled_obj) },
+    { MP_ROM_QSTR(MP_QSTR_set_aes67_mcast_prefix), MP_ROM_PTR(&mod_iyo_hwio_set_aes67_mcast_prefix_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_signal_objects_restore_done), MP_ROM_PTR(&mod_iyo_hwio_signal_objects_restore_done_obj) },
 
